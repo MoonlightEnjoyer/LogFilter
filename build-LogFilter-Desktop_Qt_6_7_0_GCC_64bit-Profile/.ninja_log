@@ -1,0 +1,27 @@
+# ninja log v5
+1	280	1694699705362328706	LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+1	280	1694699705362328706	LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+1	280	1694699705362328706	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+1	280	1694699705362328706	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+281	2265	1694699707350349972	CMakeFiles/LogFilter.dir/main.cpp.o	4fd159d2b74ea445
+281	2274	1694699707358350057	CMakeFiles/LogFilter.dir/LogFilter_autogen/mocs_compilation.cpp.o	5b9e82d888fadf3f
+281	2539	1694699707622352881	CMakeFiles/LogFilter.dir/mainwindow.cpp.o	7547309725c0ab05
+2539	2790	1694699707874355576	LogFilter	6b3550fb08161718
+2	67	1694700578482731826	LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+2	67	1694700578482731826	LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+2	67	1694700578482731826	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+2	67	1694700578482731826	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+68	3187	1694700581602737547	CMakeFiles/LogFilter.dir/mainwindow.cpp.o	7547309725c0ab05
+3187	3742	1694700582158738579	LogFilter	6b3550fb08161718
+3	375	1694702595852398819	LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+3	375	1694702595852398819	LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+3	375	1694702595852398819	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+3	375	1694702595852398819	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+3	407	1694702616916390150	LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+3	407	1694702616916390150	LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+3	407	1694702616916390150	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/timestamp	8c8d7b5a546ee17a
+3	407	1694702616916390150	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/mocs_compilation.cpp	8c8d7b5a546ee17a
+408	3235	1694702619768389330	CMakeFiles/LogFilter.dir/LogFilter_autogen/mocs_compilation.cpp.o	5b9e82d888fadf3f
+408	3681	1694702620240389203	CMakeFiles/LogFilter.dir/main.cpp.o	4fd159d2b74ea445
+408	3843	1694702620404389159	CMakeFiles/LogFilter.dir/mainwindow.cpp.o	7547309725c0ab05
+3843	4400	1694702620960389012	LogFilter	6b3550fb08161718

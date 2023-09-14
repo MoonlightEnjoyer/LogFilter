@@ -44,13 +44,26 @@
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>50</y>
-      <width>131</width>
+      <y>30</y>
+      <width>71</width>
       <height>26</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Add filter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="startFilterButton">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>90</y>
+      <width>81</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Start filter</string>
     </property>
    </widget>
   </widget>
