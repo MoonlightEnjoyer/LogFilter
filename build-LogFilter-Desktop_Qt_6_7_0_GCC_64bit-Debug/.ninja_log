@@ -1,0 +1,9 @@
+# ninja log v5
+1	339	1694696169618016120	LogFilter_autogen/timestamp	94f58427ef669945
+1	339	1694696169618016120	LogFilter_autogen/mocs_compilation.cpp	94f58427ef669945
+1	339	1694696169618016120	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Debug/LogFilter_autogen/timestamp	94f58427ef669945
+1	339	1694696169618016120	/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Debug/LogFilter_autogen/mocs_compilation.cpp	94f58427ef669945
+339	2296	1694696171577995450	CMakeFiles/LogFilter.dir/main.cpp.o	14227305be9a193e
+339	2327	1694696171605995155	CMakeFiles/LogFilter.dir/LogFilter_autogen/mocs_compilation.cpp.o	d5ffe25150c4fdf3
+339	2453	1694696171733993812	CMakeFiles/LogFilter.dir/mainwindow.cpp.o	7763a9b4edd3de27
+2453	2724	1694696172005990957	LogFilter	54e5275cb64ccf6e
