@@ -10,6 +10,8 @@
 #include <vector>
 #include <QString>
 #include <string>
+#include <regex>
+#include "filecontext.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -25,13 +27,15 @@ public:
     ~MainWindow();
 private slots:
     void openFile();
-    void filterFile();
+    void addFilter();
 private:
     Ui::MainWindow *ui;
     QPushButton* openFileButton;
-    QPushButton* startFilterButton;
     QTextEdit* mainTextEdit;
     QTabWidget* tabWidget;
-    std::vector<std::string> filesToFilter;
+    std::vector<FileContext*> filesToFilter;
 };
+
+
+
 #endif // MAINWINDOW_H

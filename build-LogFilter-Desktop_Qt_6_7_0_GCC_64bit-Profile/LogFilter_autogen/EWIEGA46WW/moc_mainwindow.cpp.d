@@ -1,5 +1,6 @@
 /home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/EWIEGA46WW/moc_mainwindow.cpp: /home/dude/Desktop/LogFilter/LogFilter/mainwindow.h \
   /home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/LogFilter_autogen/moc_predefs.h \
+  /home/dude/Desktop/LogFilter/LogFilter/filecontext.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtCore/QString \
   /home/dude/Qt/6.7.0/gcc_64/include/QtCore/q20functional.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtCore/q20memory.h \
@@ -157,6 +158,7 @@
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QFileDialog \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QGridLayout \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QMainWindow \
+  /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QProgressBar \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QPushButton \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QTabWidget \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/QTextEdit \
@@ -170,6 +172,7 @@
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qlayout.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qlayoutitem.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qmainwindow.h \
+  /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qprogressbar.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qpushbutton.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qsizepolicy.h \
   /home/dude/Qt/6.7.0/gcc_64/include/QtWidgets/qtabwidget.h \
@@ -207,6 +210,7 @@
   /usr/include/c++/12/bits/cpp_type_traits.h \
   /usr/include/c++/12/bits/cxxabi_forced.h \
   /usr/include/c++/12/bits/cxxabi_init_exception.h \
+  /usr/include/c++/12/bits/deque.tcc \
   /usr/include/c++/12/bits/enable_special_members.h \
   /usr/include/c++/12/bits/erase_if.h \
   /usr/include/c++/12/bits/exception.h \
@@ -216,6 +220,7 @@
   /usr/include/c++/12/bits/fs_fwd.h \
   /usr/include/c++/12/bits/fs_ops.h \
   /usr/include/c++/12/bits/fs_path.h \
+  /usr/include/c++/12/bits/fstream.tcc \
   /usr/include/c++/12/bits/functexcept.h \
   /usr/include/c++/12/bits/functional_hash.h \
   /usr/include/c++/12/bits/hash_bytes.h \
@@ -247,6 +252,18 @@
   /usr/include/c++/12/bits/quoted_string.h \
   /usr/include/c++/12/bits/range_access.h \
   /usr/include/c++/12/bits/refwrap.h \
+  /usr/include/c++/12/bits/regex.h \
+  /usr/include/c++/12/bits/regex.tcc \
+  /usr/include/c++/12/bits/regex_automaton.h \
+  /usr/include/c++/12/bits/regex_automaton.tcc \
+  /usr/include/c++/12/bits/regex_compiler.h \
+  /usr/include/c++/12/bits/regex_compiler.tcc \
+  /usr/include/c++/12/bits/regex_constants.h \
+  /usr/include/c++/12/bits/regex_error.h \
+  /usr/include/c++/12/bits/regex_executor.h \
+  /usr/include/c++/12/bits/regex_executor.tcc \
+  /usr/include/c++/12/bits/regex_scanner.h \
+  /usr/include/c++/12/bits/regex_scanner.tcc \
   /usr/include/c++/12/bits/shared_ptr.h \
   /usr/include/c++/12/bits/shared_ptr_atomic.h \
   /usr/include/c++/12/bits/shared_ptr_base.h \
@@ -258,6 +275,7 @@
   /usr/include/c++/12/bits/stl_algobase.h \
   /usr/include/c++/12/bits/stl_bvector.h \
   /usr/include/c++/12/bits/stl_construct.h \
+  /usr/include/c++/12/bits/stl_deque.h \
   /usr/include/c++/12/bits/stl_function.h \
   /usr/include/c++/12/bits/stl_heap.h \
   /usr/include/c++/12/bits/stl_iterator.h \
@@ -270,6 +288,7 @@
   /usr/include/c++/12/bits/stl_pair.h \
   /usr/include/c++/12/bits/stl_raw_storage_iter.h \
   /usr/include/c++/12/bits/stl_relops.h \
+  /usr/include/c++/12/bits/stl_stack.h \
   /usr/include/c++/12/bits/stl_tempbuf.h \
   /usr/include/c++/12/bits/stl_tree.h \
   /usr/include/c++/12/bits/stl_uninitialized.h \
@@ -285,6 +304,7 @@
   /usr/include/c++/12/bits/uses_allocator.h \
   /usr/include/c++/12/bits/utility.h \
   /usr/include/c++/12/bits/vector.tcc \
+  /usr/include/c++/12/bitset \
   /usr/include/c++/12/cctype \
   /usr/include/c++/12/cerrno \
   /usr/include/c++/12/chrono \
@@ -303,6 +323,7 @@
   /usr/include/c++/12/cwctype \
   /usr/include/c++/12/debug/assertions.h \
   /usr/include/c++/12/debug/debug.h \
+  /usr/include/c++/12/deque \
   /usr/include/c++/12/exception \
   /usr/include/c++/12/ext/aligned_buffer.h \
   /usr/include/c++/12/ext/alloc_traits.h \
@@ -312,11 +333,13 @@
   /usr/include/c++/12/ext/string_conversions.h \
   /usr/include/c++/12/ext/type_traits.h \
   /usr/include/c++/12/filesystem \
+  /usr/include/c++/12/fstream \
   /usr/include/c++/12/functional \
   /usr/include/c++/12/initializer_list \
   /usr/include/c++/12/iomanip \
   /usr/include/c++/12/ios \
   /usr/include/c++/12/iosfwd \
+  /usr/include/c++/12/iostream \
   /usr/include/c++/12/istream \
   /usr/include/c++/12/iterator \
   /usr/include/c++/12/limits \
@@ -333,7 +356,9 @@
   /usr/include/c++/12/pstl/glue_memory_defs.h \
   /usr/include/c++/12/pstl/glue_numeric_defs.h \
   /usr/include/c++/12/ratio \
+  /usr/include/c++/12/regex \
   /usr/include/c++/12/sstream \
+  /usr/include/c++/12/stack \
   /usr/include/c++/12/stdexcept \
   /usr/include/c++/12/streambuf \
   /usr/include/c++/12/string \
@@ -446,8 +471,10 @@
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/atomic_word.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/c++allocator.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/c++locale.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/cpu_defines.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/ctype_base.h \

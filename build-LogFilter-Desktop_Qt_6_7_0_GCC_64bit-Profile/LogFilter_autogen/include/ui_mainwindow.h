@@ -16,7 +16,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
-#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -26,9 +25,7 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QTabWidget *tabWidget;
-    QTextEdit *filterTextEdit;
     QPushButton *openFileButton;
-    QPushButton *startFilterButton;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -36,26 +33,30 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(1265, 600);
+        MainWindow->setWindowModality(Qt::WindowModal);
+        MainWindow->resize(939, 600);
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(1);
+        sizePolicy.setVerticalStretch(1);
+        sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
+        MainWindow->setSizePolicy(sizePolicy);
+        MainWindow->setAutoFillBackground(true);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
+        sizePolicy.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
+        centralwidget->setSizePolicy(sizePolicy);
+        centralwidget->setAutoFillBackground(true);
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName("tabWidget");
-        tabWidget->setGeometry(QRect(50, 90, 711, 461));
-        filterTextEdit = new QTextEdit(centralwidget);
-        filterTextEdit->setObjectName("filterTextEdit");
-        filterTextEdit->setGeometry(QRect(50, 20, 686, 51));
-        filterTextEdit->setLineWrapMode(QTextEdit::NoWrap);
+        tabWidget->setGeometry(QRect(10, 10, 751, 541));
+        tabWidget->setAutoFillBackground(false);
         openFileButton = new QPushButton(centralwidget);
         openFileButton->setObjectName("openFileButton");
-        openFileButton->setGeometry(QRect(810, 30, 71, 26));
-        startFilterButton = new QPushButton(centralwidget);
-        startFilterButton->setObjectName("startFilterButton");
-        startFilterButton->setGeometry(QRect(810, 90, 81, 26));
+        openFileButton->setGeometry(QRect(810, 140, 71, 26));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 1265, 23));
+        menubar->setGeometry(QRect(0, 0, 939, 23));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -72,8 +73,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        openFileButton->setText(QCoreApplication::translate("MainWindow", "Add filter", nullptr));
-        startFilterButton->setText(QCoreApplication::translate("MainWindow", "Start filter", nullptr));
+        openFileButton->setText(QCoreApplication::translate("MainWindow", "Open file", nullptr));
     } // retranslateUi
 
 };

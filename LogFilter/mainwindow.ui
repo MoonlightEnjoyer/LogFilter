@@ -2,68 +2,66 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1265</width>
+    <width>939</width>
     <height>600</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>1</horstretch>
+    <verstretch>1</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>90</y>
-      <width>711</width>
-      <height>461</height>
+      <x>10</x>
+      <y>10</y>
+      <width>751</width>
+      <height>541</height>
      </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
     </property>
     <property name="currentIndex">
      <number>-1</number>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="filterTextEdit">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>20</y>
-      <width>686</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="lineWrapMode">
-     <enum>QTextEdit::NoWrap</enum>
     </property>
    </widget>
    <widget class="QPushButton" name="openFileButton">
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>30</y>
+      <y>140</y>
       <width>71</width>
       <height>26</height>
      </rect>
     </property>
     <property name="text">
-     <string>Add filter</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="startFilterButton">
-    <property name="geometry">
-     <rect>
-      <x>810</x>
-      <y>90</y>
-      <width>81</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start filter</string>
+     <string>Open file</string>
     </property>
    </widget>
   </widget>
@@ -72,7 +70,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1265</width>
+     <width>939</width>
      <height>23</height>
     </rect>
    </property>

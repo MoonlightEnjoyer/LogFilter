@@ -37,7 +37,7 @@ constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::string
     "MainWindow",
     "openFile",
     "",
-    "filterFile"
+    "addFilter"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -79,7 +79,7 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
         // method 'openFile'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'filterFile'
+        // method 'addFilter'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -92,7 +92,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         (void)_t;
         switch (_id) {
         case 0: _t->openFile(); break;
-        case 1: _t->filterFile(); break;
+        case 1: _t->addFilter(); break;
         default: ;
         }
     }
