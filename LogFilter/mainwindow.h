@@ -27,7 +27,6 @@ public:
     ~MainWindow();
 private slots:
     void openFile();
-    void addFilter();
 private:
     Ui::MainWindow *ui;
     QPushButton* openFileButton;
