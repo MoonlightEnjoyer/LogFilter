@@ -1,9 +1,0 @@
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/LogFilter.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/edit_cache.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/rebuild_cache.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/list_install_components.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/install.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/install/local.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/install/strip.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/LogFilter_autogen_timestamp_deps.dir
-/home/dude/Desktop/LogFilter/build-LogFilter-Desktop_Qt_6_7_0_GCC_64bit-Profile/CMakeFiles/LogFilter_autogen.dir
