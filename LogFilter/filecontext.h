@@ -26,6 +26,8 @@ public:
 public slots:
     void search();
     static void updateProgressBar(FileContext*);
+private:
+    static void processFile(int, FileContext*, uchar*, uchar*, long);
 };
 
 #endif // FILECONTEXT_H
