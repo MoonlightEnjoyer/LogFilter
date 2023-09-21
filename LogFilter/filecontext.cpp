@@ -16,29 +16,40 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 #include <QFile>
+#include <re2/re2.h>
 
 void FileContext::search()
 {
     QFuture<void> future = QtConcurrent::run(&FileContext::updateProgressBar, this);
 }
 
-void FileContext::processFile(int id, FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
+void FileContext::processFile(int id, int threadsNumber, FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
     std::regex filter_regex(currentContext->filterTextEdit->toPlainText().toStdString());
 
-    for (long i = id * (mapped_size / 4); i < (id + 1) * (mapped_size / 4); i++)
+    long bytesToProcess;
+
+    if (mapped_size % threadsNumber == 0)
     {
-        //std::cout << *(char*)(mapped_file + i) << std::endl;
-        for (long j = i; j < (id + 1) * (mapped_size / 4); j++)
+        bytesToProcess = mapped_size / threadsNumber;
+    }
+    else if (id == threadsNumber - 1)
+    {
+        bytesToProcess = mapped_size % threadsNumber;
+    }
+    else
+    {
+        bytesToProcess = (mapped_size - mapped_size % threadsNumber) / threadsNumber;
+    }
+
+    for (long i = id * bytesToProcess; i < (id + 1) * bytesToProcess; i++)
+    {
+        for (long j = i; j < (id + 1) * bytesToProcess; j++)
         {
             if (mapped_file[j] == '\n')
             {
-                //std::cout << "Found new line char: " << *(char*)(mapped_file + i) << " - " << *(char*)(mapped_file + j) << std::endl;
-                //std::cout << "Found new line char: " << i << " - " << j << std::endl;
-
                 if (std::regex_search((char*)(mapped_file + i), (char*)(mapped_file + j), filter_regex))
                 {
-                    //std::cout << "Found match" << std::endl;
                     std::copy(mapped_file + i, mapped_file + j, mapped_result_file + i);
                 }
 
@@ -47,7 +58,42 @@ void FileContext::processFile(int id, FileContext* currentContext, uchar* mapped
             }
         }
     }
-    //std::copy(mapped_file + id * (mapped_size / 4), mapped_file + id * (mapped_size / 4) + mapped_size / 4, mapped_result_file + id * (mapped_size / 4));
+}
+
+void FileContext::startThreads(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
+{
+    if (mapped_size % 4 == 0)
+    {
+        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+        QFuture<void> future3 = QtConcurrent::run(FileContext::processFile, 3, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+        future0.waitForFinished();
+        future1.waitForFinished();
+        future2.waitForFinished();
+        future3.waitForFinished();
+    }
+    else if (mapped_size % 3 == 0)
+    {
+        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
+        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
+        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
+        future0.waitForFinished();
+        future1.waitForFinished();
+        future2.waitForFinished();
+    }
+    else if (mapped_size % 2 == 0)
+    {
+        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
+        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
+        future0.waitForFinished();
+        future1.waitForFinished();
+    }
+    else
+    {
+        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 1, currentContext, mapped_file, mapped_result_file, mapped_size);
+        future0.waitForFinished();
+    }
 }
 
 void FileContext::updateProgressBar(FileContext* currentContext)
@@ -77,27 +123,20 @@ void FileContext::updateProgressBar(FileContext* currentContext)
             {
                 mapped_file = sourceFile.map(mapped_total, mapped_size);
                 mapped_result_file = resultFile.map(mapped_total, mapped_size);
-                QFuture<void> future0 = QtConcurrent::run(processFile, 0, currentContext, mapped_file, mapped_result_file, mapped_size);
-                QFuture<void> future1 = QtConcurrent::run(processFile, 1, currentContext, mapped_file, mapped_result_file, mapped_size);
-                QFuture<void> future2 = QtConcurrent::run(processFile, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
-                QFuture<void> future3 = QtConcurrent::run(processFile, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
-                future0.waitForFinished();
-                future1.waitForFinished();
-                future2.waitForFinished();
-                future3.waitForFinished();
+                startThreads(currentContext, mapped_file, mapped_result_file, mapped_size);
                 sourceFile.unmap(mapped_file);
                 resultFile.unmap(mapped_result_file);
                 value = ((double)(mapped_total + mapped_size) / (double)sourceFile.size()) * 100.0;
 
-//                currentContext->progressBar->setValue(value);
-//                currentContext->progressBar->setFormat("Progress: " + QString::number(mapped_total + mapped_size) + " / " + QString::number(sourceFile.size()) + " * 100 = " + QString::number(value) + "%");
+                currentContext->progressBar->setValue(value);
+                currentContext->progressBar->setFormat("Progress: " + QString::number(mapped_total + mapped_size) + " / " + QString::number(sourceFile.size()) + " * 100 = " + QString::number(value) + "%");
             }
 
-//            mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
-//            mapped_result_file = resultFile.map(mapped_total, sourceFile.size() - mapped_total);
-//            std::copy(mapped_file, mapped_file + sourceFile.size() - mapped_total, mapped_result_file);
-//            sourceFile.unmap(mapped_file);
-//            resultFile.unmap(mapped_result_file);
+            mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
+            mapped_result_file = resultFile.map(mapped_total, sourceFile.size() - mapped_total);
+            startThreads(currentContext, mapped_file, mapped_result_file, sourceFile.size() - mapped_total);
+            sourceFile.unmap(mapped_file);
+            resultFile.unmap(mapped_result_file);
             value = 100.0;
 
             currentContext->progressBar->setValue(value);
