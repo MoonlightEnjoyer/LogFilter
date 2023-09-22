@@ -10,7 +10,6 @@
 #include <vector>
 #include <QString>
 #include <string>
-#include <regex>
 #include <QProgressBar>
 #include <iostream>
 #include <fstream>

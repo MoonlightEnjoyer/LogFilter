@@ -8,7 +8,6 @@
 #include <QString>
 #include <QTabWidget>
 #include <string>
-#include <regex>
 #include <vector>
 #include <QWidget>
 #include <QProgressBar>
@@ -53,11 +52,8 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
             {
                 stringToAnalize = new char[j - i + 1];
                 std::copy(mapped_file + i, mapped_file + j, stringToAnalize);
-                std::string str(stringToAnalize);
-                std::string submatch;
-                RE2 regex(filter_regex);
 
-                if (RE2::PartialMatch(str, regex, (void*)NULL))
+                if (RE2::PartialMatch(stringToAnalize, filter_regex, (void*)NULL))
                 {
                     std::copy(mapped_file + i, mapped_file + j, mapped_result_file + i);
                 }
