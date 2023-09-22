@@ -24,12 +24,9 @@ void FileContext::search()
 
 void FileContext::processFile(int id, int threadsNumber, FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
-
-    std::string filter_regex(currentContext->filterTextEdit->toPlainText().toStdString());
+    RE2 filter_regex(currentContext->filterTextEdit->toPlainText().toStdString());
 
     long bytesToProcess;
-
-    char* stringToAnalize = nullptr;
 
     if (mapped_size % threadsNumber == 0)
     {
@@ -44,13 +41,14 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
         bytesToProcess = (mapped_size - mapped_size % threadsNumber) / threadsNumber;
     }
 
+    char* stringToAnalize = new char[30000];
+
     for (long i = id * bytesToProcess; i < (id + 1) * bytesToProcess; i++)
     {
         for (long j = i; j < (id + 1) * bytesToProcess; j++)
         {
             if (mapped_file[j] == '\n')
             {
-                stringToAnalize = new char[j - i + 1];
                 std::copy(mapped_file + i, mapped_file + j, stringToAnalize);
 
                 if (RE2::PartialMatch(stringToAnalize, filter_regex, (void*)NULL))
@@ -58,13 +56,13 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
                     std::copy(mapped_file + i, mapped_file + j, mapped_result_file + i);
                 }
 
-                delete [] stringToAnalize;
-
                 i = j;
                 break;
             }
         }
     }
+
+    delete [] stringToAnalize;
 }
 
 void FileContext::startThreads(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
