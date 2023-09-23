@@ -41,21 +41,29 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
         bytesToProcess = (mapped_size - mapped_size % threadsNumber) / threadsNumber;
     }
 
-    char* stringToAnalize = new char[30000];
+    //char* stringToAnalize = new char[30000];
     long matchCounter = 0;
-    std::string match;
+    long memoryStart = id * bytesToProcess;
+    long memoryEnd = (id + 1) * bytesToProcess;
+    uchar* memoryWriteStart = memoryStart + mapped_result_file;
+    uchar* memoryReadStart;
+    uchar* memoryReadEnd;
 
-    for (long i = id * bytesToProcess; i < (id + 1) * bytesToProcess; i++)
+    for (long i = id * bytesToProcess; i < memoryEnd; i++)
     {
-        for (long j = i; j < (id + 1) * bytesToProcess; j++)
+        for (long j = i; j < memoryEnd; j++)
         {
             if (mapped_file[j] == '\n')
             {
-                std::copy(mapped_file + i, mapped_file + j, stringToAnalize);
+                memoryReadStart = mapped_file + i;
+                memoryReadEnd = mapped_file + j;
 
-                if (RE2::PartialMatch(stringToAnalize, filter_regex, &match))
+                //std::copy(memoryReadStart, memoryReadEnd, stringToAnalize);
+                std::copy(memoryReadStart, memoryReadEnd, memoryWriteStart + matchCounter);
+
+                if (RE2::PartialMatch((char*)(memoryWriteStart + matchCounter), filter_regex, (void*)NULL))
                 {
-                    std::copy(mapped_file + i, mapped_file + j, id * bytesToProcess + mapped_result_file + matchCounter);
+                    //std::copy(memoryReadStart, memoryReadEnd, memoryWriteStart + matchCounter);
                     matchCounter += j - i;
                 }
 
@@ -65,7 +73,7 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
         }
     }
 
-    delete [] stringToAnalize;
+    //delete [] stringToAnalize;
 }
 
 void FileContext::startThreads(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
