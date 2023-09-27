@@ -1,3 +1,5 @@
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 cmake_minimum_required(VERSION 3.8)
 
 project(LogFilter VERSION 0.1 LANGUAGES CXX)
@@ -8,11 +10,9 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ftree-vectorize -ftree-vectorizer-verbose=1")
 
-#set(CMAKE_PREFIX_PATH "/usr/local/lib/")
 
-find_package(absl REQUIRED)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -32,7 +32,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         filecontext.h
         filecontext.cpp
+        simpleregex.h
+        simpleregex.cpp
     )
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET LogFilter APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
@@ -52,7 +55,6 @@ else()
 endif()
 
 target_link_libraries(LogFilter PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(LogFilter PRIVATE re2)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -74,6 +76,7 @@ install(TARGETS LogFilter
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(LogFilter)

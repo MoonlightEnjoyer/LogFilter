@@ -15,8 +15,7 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 #include <QFile>
-#include <re2/re2.h>
-#include <absl/strings/string_view.h>
+#include "simpleregex.h"
 
 void FileContext::search()
 {
@@ -25,7 +24,8 @@ void FileContext::search()
 
 void FileContext::processFile(int id, int threadsNumber, FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
-    RE2 filter_regex("(" + currentContext->filterTextEdit->toPlainText().toStdString() + ")");
+    std::string filter_regex_s(currentContext->filterTextEdit->toPlainText().toStdString());
+    char* filter_regex = (char*)filter_regex_s.c_str();
 
     long bytesToProcess;
 
@@ -53,9 +53,11 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
         {
             if (mapped_file[j] == '\n')
             {
-                std::copy(mapped_file + i, mapped_file + j, memoryWriteStart + matchCounter);
-
-                matchCounter += (j - i) * RE2::PartialMatch((char*)(memoryWriteStart + matchCounter), filter_regex, (void*)NULL);
+                if (SimpleRegex::Match((char*)(mapped_file + i), 0, j - i, filter_regex, filter_regex_s.size()))
+                {
+                    std::copy(mapped_file + i, mapped_file + j, memoryWriteStart + matchCounter);
+                    matchCounter += (j - i);
+                }
 
                 i = j;
                 break;
@@ -66,38 +68,60 @@ void FileContext::processFile(int id, int threadsNumber, FileContext* currentCon
 
 void FileContext::startThreads(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
-    if (mapped_size % 4 == 0)
-    {
-        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
-        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
-        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
-        QFuture<void> future3 = QtConcurrent::run(FileContext::processFile, 3, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
-        future0.waitForFinished();
-        future1.waitForFinished();
-        future2.waitForFinished();
-        future3.waitForFinished();
-    }
-    else if (mapped_size % 3 == 0)
-    {
-        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
-        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
-        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
-        future0.waitForFinished();
-        future1.waitForFinished();
-        future2.waitForFinished();
-    }
-    else if (mapped_size % 2 == 0)
-    {
-        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
-        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
-        future0.waitForFinished();
-        future1.waitForFinished();
-    }
-    else
-    {
-        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 1, currentContext, mapped_file, mapped_result_file, mapped_size);
-        future0.waitForFinished();
-    }
+//    if (mapped_size % 8 == 0)
+//    {
+//        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future3 = QtConcurrent::run(FileContext::processFile, 3, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future4 = QtConcurrent::run(FileContext::processFile, 4, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future5 = QtConcurrent::run(FileContext::processFile, 5, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future6 = QtConcurrent::run(FileContext::processFile, 6, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future7 = QtConcurrent::run(FileContext::processFile, 7, 8, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        future0.waitForFinished();
+//        future1.waitForFinished();
+//        future2.waitForFinished();
+//        future3.waitForFinished();
+//        future4.waitForFinished();
+//        future5.waitForFinished();
+//        future6.waitForFinished();
+//        future7.waitForFinished();
+//    }
+//    else if (mapped_size % 4 == 0)
+//    {
+//        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future3 = QtConcurrent::run(FileContext::processFile, 3, 4, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        future0.waitForFinished();
+//        future1.waitForFinished();
+//        future2.waitForFinished();
+//        future3.waitForFinished();
+//    }
+//    else if (mapped_size % 3 == 0)
+//    {
+//        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future2 = QtConcurrent::run(FileContext::processFile, 2, 3, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        future0.waitForFinished();
+//        future1.waitForFinished();
+//        future2.waitForFinished();
+//    }
+//    else if (mapped_size % 2 == 0)
+//    {
+//        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        QFuture<void> future1 = QtConcurrent::run(FileContext::processFile, 1, 2, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        future0.waitForFinished();
+//        future1.waitForFinished();
+//    }
+//    else
+//    {
+//        QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 1, currentContext, mapped_file, mapped_result_file, mapped_size);
+//        future0.waitForFinished();
+//    }
+
+    QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 1, currentContext, mapped_file, mapped_result_file, mapped_size);
+    future0.waitForFinished();
 }
 
 void FileContext::updateProgressBar(FileContext* currentContext)
