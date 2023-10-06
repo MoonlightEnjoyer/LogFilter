@@ -17,57 +17,68 @@
 #include <QFile>
 #include <re2/re2.h>
 #include <absl/strings/string_view.h>
+#include <filesystem>
 
 void FileContext::search()
 {
     QFuture<void> future = QtConcurrent::run(&FileContext::updateProgressBar, this);
 }
 
-void FileContext::processFile(int id, int threadsNumber, FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
+long FileContext::processFile(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
     RE2 filter_regex("(" + currentContext->filterTextEdit->toPlainText().toStdString() + ")");
 
-    long bytesToProcess;
+    long bytesToProcess = mapped_size;
 
-    if (mapped_size % threadsNumber == 0)
-    {
-        bytesToProcess = mapped_size / threadsNumber;
-    }
-    else if (id == threadsNumber - 1)
-    {
-        bytesToProcess = mapped_size % threadsNumber;
-    }
-    else
-    {
-        bytesToProcess = (mapped_size - mapped_size % threadsNumber) / threadsNumber;
-    }
-
+    long memoryEnd = bytesToProcess;
+    uchar* memoryWriteStart = mapped_result_file;
     long matchCounter = 0;
-    long memoryStart = id * bytesToProcess;
-    long memoryEnd = (id + 1) * bytesToProcess;
-    uchar* memoryWriteStart = memoryStart + mapped_result_file;
+    uchar* flag = mapped_file;
 
-    for (long i = memoryStart; i < memoryEnd; i++)
+    for (long i = 0; i < memoryEnd; i++)
     {
         for (long j = i; j < memoryEnd; j++)
         {
-            if (mapped_file[j] == '\n')
+            if (mapped_file[j] == '\r')
             {
-                std::copy(mapped_file + i, mapped_file + j, memoryWriteStart + matchCounter);
+                if (j + 1 < memoryEnd && mapped_file[j + 1] == '\n')
+                {
+                    j++;
+                }
 
-                matchCounter += (j - i) * RE2::PartialMatch((char*)(memoryWriteStart + matchCounter), filter_regex, (void*)NULL);
+                if (j - i > 2000)
+                {
+                    std::cout<< "i: " << i << " j: " << j << std::endl;
+                    std::cout<< j - i << std::endl;
+                }
+
+                flag = mapped_file + i;
+                std::copy(mapped_file + i, mapped_file + j + 1, memoryWriteStart);
+
+                if (RE2::PartialMatch((char*)(memoryWriteStart), filter_regex, (void*)NULL))
+                {
+                    matchCounter += (j - i + 1);
+                    memoryWriteStart += (j - i + 1);
+                }
+                else
+                {
+                    std::fill(memoryWriteStart, memoryWriteStart + j - i + 1, 0);
+                }
 
                 i = j;
                 break;
             }
         }
     }
+
+    return matchCounter;
 }
 
-void FileContext::startThreads(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
+long FileContext::startThreads(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
-    QFuture<void> future0 = QtConcurrent::run(FileContext::processFile, 0, 1, currentContext, mapped_file, mapped_result_file, mapped_size);
+    QFuture<long> future0 = QtConcurrent::run(FileContext::processFile, currentContext, mapped_file, mapped_result_file, mapped_size);
     future0.waitForFinished();
+    return future0.result();
 }
 
 void FileContext::updateProgressBar(FileContext* currentContext)
@@ -83,6 +94,8 @@ void FileContext::updateProgressBar(FileContext* currentContext)
     resultFileFiller.flush();
     resultFileFiller.close();
     QFile resultFile("/home/dude/Desktop/filterTest/test.txt");
+    long sizeCounter = 0;
+    long s = 0;
     if (sourceFile.open(QIODevice::ReadWrite))
     {
         if (resultFile.open(QIODevice::ReadWrite))
@@ -90,14 +103,19 @@ void FileContext::updateProgressBar(FileContext* currentContext)
             long mapped_size = 2l * 1024l * 1024l * 1024l;
             uchar* mapped_file;
             uchar* mapped_result_file;
-            long main_processing_size = sourceFile.size() / mapped_size * mapped_size;
             long mapped_total;
 
-            for (mapped_total = 0; mapped_total < main_processing_size; mapped_total += mapped_size)
+            long matchCounter = 0;
+
+            for (mapped_total = 0; mapped_total + mapped_size <= sourceFile.size(); mapped_total += mapped_size)
             {
                 mapped_file = sourceFile.map(mapped_total, mapped_size);
-                mapped_result_file = resultFile.map(mapped_total, mapped_size);
-                startThreads(currentContext, mapped_file, mapped_result_file, mapped_size);
+                mapped_result_file = resultFile.map(sizeCounter, mapped_size);
+                matchCounter = startThreads(currentContext, mapped_file, mapped_result_file, mapped_size);
+                sizeCounter += matchCounter;
+                for (long f = mapped_size - 1; f > 0 && mapped_file[f] != '\n' && mapped_file[f] != '\r'; f--, mapped_total--)
+                {
+                }
                 sourceFile.unmap(mapped_file);
                 resultFile.unmap(mapped_result_file);
                 value = ((double)(mapped_total + mapped_size) / (double)sourceFile.size()) * 100.0;
@@ -106,9 +124,17 @@ void FileContext::updateProgressBar(FileContext* currentContext)
                 currentContext->progressBar->setFormat("Progress: " + QString::number(mapped_total + mapped_size) + " / " + QString::number(sourceFile.size()) + " * 100 = " + QString::number(value) + "%");
             }
 
+
+            s = sourceFile.size();
+            std::cout << "mapped_total: " << mapped_total << std::endl;
+            std::cout << "last mapped size: " << sourceFile.size() - mapped_total << std::endl;
             mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
-            mapped_result_file = resultFile.map(mapped_total, sourceFile.size() - mapped_total);
-            startThreads(currentContext, mapped_file, mapped_result_file, sourceFile.size() - mapped_total);
+            mapped_result_file = resultFile.map(sizeCounter, sourceFile.size() - mapped_total);
+            matchCounter = startThreads(currentContext, mapped_file, mapped_result_file, sourceFile.size() - mapped_total);
+            sizeCounter += matchCounter;
+            std::cout << "#######################" << std::endl;
+            std::cout << "matchCounter: " << matchCounter << std::endl;
+            std::cout << "sizeCounter" << sizeCounter << std::endl;
             sourceFile.unmap(mapped_file);
             resultFile.unmap(mapped_result_file);
             value = 100.0;
@@ -120,4 +146,6 @@ void FileContext::updateProgressBar(FileContext* currentContext)
         }
         sourceFile.close();
     }
+
+    std::filesystem::resize_file("/home/dude/Desktop/filterTest/test.txt", sizeCounter);
 }
