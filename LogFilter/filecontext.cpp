@@ -27,32 +27,20 @@ void FileContext::search()
 long FileContext::processFile(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, long mapped_size)
 {
     RE2 filter_regex("(" + currentContext->filterTextEdit->toPlainText().toStdString() + ")");
-
-    long bytesToProcess = mapped_size;
-
-    long memoryEnd = bytesToProcess;
     uchar* memoryWriteStart = mapped_result_file;
     long matchCounter = 0;
-    uchar* flag = mapped_file;
 
-    for (long i = 0; i < memoryEnd; i++)
+    for (long i = 0; i < mapped_size; i++)
     {
-        for (long j = i; j < memoryEnd; j++)
+        for (long j = i; j < mapped_size; j++)
         {
             if (mapped_file[j] == '\r')
             {
-                if (j + 1 < memoryEnd && mapped_file[j + 1] == '\n')
+                if (j + 1 < mapped_size && mapped_file[j + 1] == '\n')
                 {
                     j++;
                 }
 
-                if (j - i > 2000)
-                {
-                    std::cout<< "i: " << i << " j: " << j << std::endl;
-                    std::cout<< j - i << std::endl;
-                }
-
-                flag = mapped_file + i;
                 std::copy(mapped_file + i, mapped_file + j + 1, memoryWriteStart);
 
                 if (RE2::PartialMatch((char*)(memoryWriteStart), filter_regex, (void*)NULL))
@@ -125,16 +113,10 @@ void FileContext::updateProgressBar(FileContext* currentContext)
             }
 
 
-            s = sourceFile.size();
-            std::cout << "mapped_total: " << mapped_total << std::endl;
-            std::cout << "last mapped size: " << sourceFile.size() - mapped_total << std::endl;
             mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
             mapped_result_file = resultFile.map(sizeCounter, sourceFile.size() - mapped_total);
             matchCounter = startThreads(currentContext, mapped_file, mapped_result_file, sourceFile.size() - mapped_total);
             sizeCounter += matchCounter;
-            std::cout << "#######################" << std::endl;
-            std::cout << "matchCounter: " << matchCounter << std::endl;
-            std::cout << "sizeCounter" << sizeCounter << std::endl;
             sourceFile.unmap(mapped_file);
             resultFile.unmap(mapped_result_file);
             value = 100.0;
