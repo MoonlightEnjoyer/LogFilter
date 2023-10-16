@@ -1,1 +1,5 @@
 **/build-*/*
+**/LogFilter/CMakeCache.txt
+**/LogFilter/CMakeFiles/**
+**/LogFilter/LogFilter_autogen/**
+**/LogFilter/cmake_install.cmake
