@@ -22,12 +22,10 @@ public:
     QTextEdit* filterTextEdit;
     QTextEdit* tabTextEdit;
     QProgressBar* progressBar;
+    static std::int64_t processFile(FileContext*, uchar*, uchar*, std::int64_t);
 public slots:
     void search();
-    static void updateProgressBar(FileContext*);
-private:
-    static long processFile(FileContext*, uchar*, uchar*, long);
-    static long startThreads(FileContext*, uchar*, uchar*, long);
+    static void updateProgressBar(FileContext*, QString);
 };
 
 #endif // FILECONTEXT_H
