@@ -18,7 +18,7 @@ public:
 public slots:
     void process();
 signals:
-    void progress(std::int64_t);
+    void progress(int);
 };
 
 #endif // FILEPROCESSWORKER_H

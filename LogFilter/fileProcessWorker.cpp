@@ -73,8 +73,7 @@ void FileProcessWorker::process()
                 resultFile.unmap(mapped_result_file);
                 value = ((double)(mapped_total + mapped_size) / (double)sourceFile.size()) * 100.0;
 
-                //this->fileContext->progressBar->setValue(value);
-                //this->fileContext->progressBar->setFormat("Progress: " + QString::number(mapped_total + mapped_size) + " / " + QString::number(sourceFile.size()) + " * 100 = " + QString::number(value) + "%");
+                emit progress(int(value));
             }
 
             mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
@@ -84,9 +83,7 @@ void FileProcessWorker::process()
             sourceFile.unmap(mapped_file);
             resultFile.unmap(mapped_result_file);
             value = 100.0;
-
-            //this->fileContext->progressBar->setValue(value);
-            //this->fileContext->progressBar->setFormat("Progress: " + QString::number(mapped_total) + " / " + QString::number(sourceFile.size()) + " * 100 = " + QString::number(value) + "%");
+            emit progress(int(value));
 
             resultFile.close();
         }

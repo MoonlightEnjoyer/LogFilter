@@ -24,14 +24,15 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-private slots:
+public slots:
     void openFile();
+    void updateProgressBar(int value);
 private:
     Ui::MainWindow *ui;
     QPushButton* openFileButton;
     QTextEdit* mainTextEdit;
     QTabWidget* tabWidget;
-    std::vector<FileContext*> filesToFilter;
+    FileContext* fileToFilter;
 };
 
 

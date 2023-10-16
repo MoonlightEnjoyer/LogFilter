@@ -18,6 +18,7 @@
 #include <filesystem>
 #include "simpleregex.h"
 #include "fileProcessWorker.h"
+#include "mainwindow.h"
 
 void FileContext::search()
 {
@@ -30,6 +31,7 @@ void FileContext::search()
     worker->moveToThread(thread);
 
     connect(thread, &QThread::started, worker, &FileProcessWorker::process);
+    connect(worker, &FileProcessWorker::progress, (MainWindow*)this->mainWindow, &MainWindow::updateProgressBar);
 
 
     thread->start();

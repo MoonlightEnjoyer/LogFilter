@@ -22,6 +22,8 @@ public:
     QTextEdit* filterTextEdit;
     QTextEdit* tabTextEdit;
     QProgressBar* progressBar;
+    QMainWindow* mainWindow;
+
 public slots:
     void search();
 };

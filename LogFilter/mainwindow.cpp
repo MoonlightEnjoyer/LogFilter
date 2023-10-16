@@ -31,6 +31,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openFileButton, &QPushButton::released, this, &MainWindow::openFile);
 }
 
+void MainWindow::updateProgressBar(int value)
+{
+    this->fileToFilter->progressBar->setValue(value);
+    this->fileToFilter->progressBar->setFormat(QString::number(value));
+}
+
 void MainWindow::openFile()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
@@ -48,6 +54,8 @@ void MainWindow::openFile()
         searchButton->setText("Search");
         QGridLayout* tabLayout = new QGridLayout();
         QProgressBar* progressBar = new QProgressBar();
+
+
 
         QWidget* tabPage = new QWidget();
         tabPage->setLayout(tabLayout);
@@ -72,7 +80,10 @@ void MainWindow::openFile()
         newFileContext->filterTextEdit = tabFilterTextEdit;
         newFileContext->sourceFilePath = fileName.toStdString();
         newFileContext->progressBar = progressBar;
-        filesToFilter.push_back(newFileContext);
+
+        newFileContext->mainWindow = this;
+
+        fileToFilter = newFileContext;
         connect(searchButton, &QPushButton::released, newFileContext, &FileContext::search);
         string line;
 
