@@ -14,6 +14,7 @@ public:
     QString resultFileName;
     FileProcessWorker() {}
     virtual ~FileProcessWorker() {}
+    static std::int64_t processFile(FileContext*, uchar*, uchar*, std::int64_t);
 public slots:
     void process();
 signals:
