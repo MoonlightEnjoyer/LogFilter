@@ -54,9 +54,7 @@ void FileProcessWorker::process()
             uchar* mapped_file;
             uchar* mapped_result_file;
             std::int64_t mapped_total;
-
             std::int64_t matchCounter = 0;
-
             std::int64_t mappedReal;
 
             for (mapped_total = 0; mapped_total <= sourceFile.size(); mapped_total += mapped_size)
@@ -73,14 +71,11 @@ void FileProcessWorker::process()
                 sourceFile.unmap(mapped_file);
                 resultFile.unmap(mapped_result_file);
 
-
-
                 emit progress(int(value), this->fileContext->progressBar);
             }
             resultFile.close();
         }
         sourceFile.close();
     }
-
     std::filesystem::resize_file(resultFileName.toStdString(), sizeCounter);
 }

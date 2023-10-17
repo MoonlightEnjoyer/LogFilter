@@ -1,10 +1,6 @@
 #include "mainwindow.h"
-#include <QGraphicsOpacityEffect>
-#include <QLineEdit>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -64,7 +60,6 @@ void MainWindow::openFile()
         connect(thread, &QThread::started, worker, &FileProcessWorker::process);
         connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);
         connect(searchButton, &QPushButton::released, newFileContext, &FileContext::search);
-
 
         ifstream file;
         file.open(fileName.toStdString());

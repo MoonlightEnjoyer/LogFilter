@@ -1,30 +1,16 @@
 #ifndef FILECONTEXT_H
 #define FILECONTEXT_H
 
-#include <QMainWindow>
-#include <QFileDialog>
-#include <QGridLayout>
-#include <QPushButton>
 #include <QTextEdit>
-#include <QTabWidget>
-#include <vector>
 #include <QString>
-#include <string>
 #include <QProgressBar>
+#include <QThread>
+#include <string>
 #include <iostream>
 #include <fstream>
-#include <QString>
-#include <string>
-#include "fileProcessWorker.h"
-#include <QThread>
-#include <iostream>
-#include <QString>
-#include <string>
-#include <QWidget>
-#include <QThread>
-#include <filesystem>
 #include "simpleregex.h"
 #include "mainwindow.h"
+#include "fileProcessWorker.h"
 #include <QLineEdit>
 
 class FileProcessWorker;

@@ -1,7 +1,6 @@
 #ifndef FILEPROCESSWORKER_H
 #define FILEPROCESSWORKER_H
-#pragma once
-#include <QObject>
+
 #include <QString>
 #include <iostream>
 #include "filecontext.h"
