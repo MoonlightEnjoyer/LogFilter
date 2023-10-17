@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include <QGraphicsOpacityEffect>
+#include <QLineEdit>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,8 +29,7 @@ void MainWindow::openFile()
     {
         QTextEdit* tabFileTextEdit = new QTextEdit();
         tabFileTextEdit->setLineWrapMode(QTextEdit::LineWrapMode::NoWrap);
-        QTextEdit* tabFilterTextEdit = new QTextEdit();
-        tabFilterTextEdit->setLineWrapMode(QTextEdit::LineWrapMode::NoWrap);
+        QLineEdit* tabFilterTextEdit = new QLineEdit();
         QStringList splittedName = fileName.split('/');
         QPushButton* searchButton = new QPushButton();
         searchButton->setText("Search");
@@ -40,13 +41,11 @@ void MainWindow::openFile()
 
         tabLayout->addWidget(tabFilterTextEdit, 0, 0);
         tabLayout->addWidget(searchButton, 0, 1);
-        tabLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
-        tabLayout->addWidget(progressBar, 2, 0, 1, 2);
-        tabLayout->addWidget(tabFileTextEdit, 3, 0, 1, 2);
+        tabLayout->addWidget(progressBar, 1, 0, 1, 2);
+        tabLayout->addWidget(tabFileTextEdit, 2, 0, 1, 2);
         tabLayout->setRowStretch(0, 15);
-        tabLayout->setRowStretch(2, 10);
-        tabLayout->setRowStretch(3, 100);
-
+        tabLayout->setRowStretch(1, 15);
+        tabLayout->setRowStretch(2, 100);
 
         tabWidget->addTab(tabPage, splittedName.constLast());
 

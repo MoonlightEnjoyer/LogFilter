@@ -25,6 +25,7 @@
 #include <filesystem>
 #include "simpleregex.h"
 #include "mainwindow.h"
+#include <QLineEdit>
 
 class FileProcessWorker;
 
@@ -33,7 +34,7 @@ class FileContext : public QObject
     Q_OBJECT
 public:
     std::string sourceFilePath;
-    QTextEdit* filterTextEdit;
+    QLineEdit* filterTextEdit;
     QTextEdit* tabTextEdit;
     QProgressBar* progressBar;
     QThread* workerThread;

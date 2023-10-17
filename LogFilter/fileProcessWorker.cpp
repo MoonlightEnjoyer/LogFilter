@@ -2,7 +2,7 @@
 
 std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, std::int64_t mapped_size)
 {
-    std::string filter_regex_s(currentContext->filterTextEdit->toPlainText().toStdString());
+    std::string filter_regex_s(currentContext->filterTextEdit->text().toStdString());
     char* filter_regex = (char*)filter_regex_s.c_str();    uchar* memoryWriteStart = mapped_result_file;
     std::int64_t matchCounter = 0;
 
@@ -57,31 +57,26 @@ void FileProcessWorker::process()
 
             std::int64_t matchCounter = 0;
 
-            for (mapped_total = 0; mapped_total + mapped_size <= sourceFile.size(); mapped_total += mapped_size)
+            std::int64_t mappedReal;
+
+            for (mapped_total = 0; mapped_total <= sourceFile.size(); mapped_total += mapped_size)
             {
-                mapped_file = sourceFile.map(mapped_total, mapped_size);
-                mapped_result_file = resultFile.map(sizeCounter, mapped_size);
-                matchCounter = processFile(this->fileContext, mapped_file, mapped_result_file, mapped_size);
+                mappedReal = ((mapped_total + mapped_size) <= sourceFile.size()) ? mapped_size : (sourceFile.size() - mapped_total);
+                mapped_file = sourceFile.map(mapped_total, mappedReal);
+                mapped_result_file = resultFile.map(sizeCounter, mappedReal);
+                matchCounter = processFile(this->fileContext, mapped_file, mapped_result_file, mappedReal);
+                value = ((double)(mapped_total + mappedReal) / (double)sourceFile.size()) * 100.0;
                 sizeCounter += matchCounter;
-                for (std::int64_t f = mapped_size - 1; f > 0 && mapped_file[f] != '\n' && mapped_file[f] != '\r'; f--, mapped_total--)
+                for (std::int64_t f = mappedReal - 1; f > 0 && mapped_file[f] != '\n' && mapped_file[f] != '\r'; f--, mapped_total--)
                 {
                 }
                 sourceFile.unmap(mapped_file);
                 resultFile.unmap(mapped_result_file);
-                value = ((double)(mapped_total + mapped_size) / (double)sourceFile.size()) * 100.0;
+
+
 
                 emit progress(int(value), this->fileContext->progressBar);
             }
-
-            mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
-            mapped_result_file = resultFile.map(sizeCounter, sourceFile.size() - mapped_total);
-            matchCounter = processFile(this->fileContext, mapped_file, mapped_result_file, sourceFile.size() - mapped_total);
-            sizeCounter += matchCounter;
-            sourceFile.unmap(mapped_file);
-            resultFile.unmap(mapped_result_file);
-            value = 100.0;
-            emit progress(int(value), this->fileContext->progressBar);
-
             resultFile.close();
         }
         sourceFile.close();
