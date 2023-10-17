@@ -13,6 +13,20 @@
 #include <QProgressBar>
 #include <iostream>
 #include <fstream>
+#include <QString>
+#include <string>
+#include "fileProcessWorker.h"
+#include <QThread>
+#include <iostream>
+#include <QString>
+#include <string>
+#include <QWidget>
+#include <QThread>
+#include <filesystem>
+#include "simpleregex.h"
+#include "mainwindow.h"
+
+class FileProcessWorker;
 
 class FileContext : public QObject
 {
@@ -22,7 +36,8 @@ public:
     QTextEdit* filterTextEdit;
     QTextEdit* tabTextEdit;
     QProgressBar* progressBar;
-    QMainWindow* mainWindow;
+    QThread* workerThread;
+    FileProcessWorker* worker;
 
 public slots:
     void search();

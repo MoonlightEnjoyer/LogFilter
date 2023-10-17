@@ -1,5 +1,4 @@
 #include "simpleregex.h"
-#include <iostream>
 
 bool SimpleRegex::Match(char *text, std::int64_t startIndex, std::int64_t endIndex, char *pattern, std::int64_t patternLength)
 {

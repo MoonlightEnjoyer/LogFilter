@@ -1,23 +1,4 @@
 #include "mainwindow.h"
-#include "filecontext.h"
-#include "./ui_mainwindow.h"
-#include <QFileDialog>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QTextEdit>
-#include <iostream>
-#include <fstream>
-#include <QString>
-#include <QTabWidget>
-#include <string>
-#include <vector>
-#include <QWidget>
-#include <QProgressBar>
-#include <QThread>
-#include <QFuture>
-#include <QtConcurrent/QtConcurrent>
-#include <QFile>
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,10 +12,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openFileButton, &QPushButton::released, this, &MainWindow::openFile);
 }
 
-void MainWindow::updateProgressBar(int value)
+void MainWindow::updateProgressBar(int value, QProgressBar* progressBar)
 {
-    this->fileToFilter->progressBar->setValue(value);
-    this->fileToFilter->progressBar->setFormat(QString::number(value));
+    progressBar->setValue(value);
+    progressBar->setFormat(QString::number(value) + " %");
 }
 
 void MainWindow::openFile()
@@ -42,7 +23,6 @@ void MainWindow::openFile()
     QStringList fileNames = QFileDialog::getOpenFileNames();
 
     using namespace std;
-    int index = 0;
     for (const auto& fileName : fileNames)
     {
         QTextEdit* tabFileTextEdit = new QTextEdit();
@@ -55,36 +35,40 @@ void MainWindow::openFile()
         QGridLayout* tabLayout = new QGridLayout();
         QProgressBar* progressBar = new QProgressBar();
 
-
-
         QWidget* tabPage = new QWidget();
         tabPage->setLayout(tabLayout);
+
         tabLayout->addWidget(tabFilterTextEdit, 0, 0);
         tabLayout->addWidget(searchButton, 0, 1);
-        tabLayout->addWidget(progressBar, 1, 0, 1, 2);
-        tabLayout->addWidget(tabFileTextEdit, 2, 0, 1, 2);
-
+        tabLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+        tabLayout->addWidget(progressBar, 2, 0, 1, 2);
+        tabLayout->addWidget(tabFileTextEdit, 3, 0, 1, 2);
         tabLayout->setRowStretch(0, 15);
-        tabLayout->setRowStretch(1, 10);
-        tabLayout->setRowStretch(2, 100);
+        tabLayout->setRowStretch(2, 10);
+        tabLayout->setRowStretch(3, 100);
+
 
         tabWidget->addTab(tabPage, splittedName.constLast());
 
-        tabWidget->setCurrentIndex(index++);
-        tabWidget->setCurrentWidget(tabFileTextEdit);
-
-        ifstream file;
-        file.open(fileName.toStdString());
         FileContext* newFileContext = new FileContext();
         newFileContext->tabTextEdit = tabFileTextEdit;
         newFileContext->filterTextEdit = tabFilterTextEdit;
         newFileContext->sourceFilePath = fileName.toStdString();
         newFileContext->progressBar = progressBar;
 
-        newFileContext->mainWindow = this;
+        QThread* thread = new QThread();
+        FileProcessWorker* worker = new FileProcessWorker();
 
-        fileToFilter = newFileContext;
+        newFileContext->workerThread = thread;
+        newFileContext->worker = worker;
+
+        connect(thread, &QThread::started, worker, &FileProcessWorker::process);
+        connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);
         connect(searchButton, &QPushButton::released, newFileContext, &FileContext::search);
+
+
+        ifstream file;
+        file.open(fileName.toStdString());
         string line;
 
         if (file.is_open())

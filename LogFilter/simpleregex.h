@@ -1,6 +1,6 @@
 #ifndef SIMPLEREGEX_H
 #define SIMPLEREGEX_H
-
+#pragma once
 #include <iostream>
 
 class SimpleRegex

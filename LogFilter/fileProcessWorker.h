@@ -1,10 +1,13 @@
 #ifndef FILEPROCESSWORKER_H
 #define FILEPROCESSWORKER_H
-
+#pragma once
 #include <QObject>
 #include <QString>
 #include <iostream>
 #include "filecontext.h"
+#include "simpleregex.h"
+
+class FileContext;
 
 class FileProcessWorker : public QObject
 {
@@ -18,7 +21,7 @@ public:
 public slots:
     void process();
 signals:
-    void progress(int);
+    void progress(int, QProgressBar*);
 };
 
 #endif // FILEPROCESSWORKER_H

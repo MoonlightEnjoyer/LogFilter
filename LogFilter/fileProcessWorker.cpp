@@ -1,7 +1,4 @@
 #include "fileProcessWorker.h"
-#include <QFuture>
-#include <QtConcurrent/QtConcurrent>
-#include "simpleregex.h"
 
 std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, std::int64_t mapped_size)
 {
@@ -13,7 +10,7 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
     {
         for (std::int64_t j = i; j < mapped_size; j++)
         {
-            if (mapped_file[j] == '\r')
+            if (mapped_file[j] == '\r' || mapped_file[j] == '\n')
             {
                 if (j + 1 < mapped_size && mapped_file[j + 1] == '\n')
                 {
@@ -73,7 +70,7 @@ void FileProcessWorker::process()
                 resultFile.unmap(mapped_result_file);
                 value = ((double)(mapped_total + mapped_size) / (double)sourceFile.size()) * 100.0;
 
-                emit progress(int(value));
+                emit progress(int(value), this->fileContext->progressBar);
             }
 
             mapped_file = sourceFile.map(mapped_total, sourceFile.size() - mapped_total);
@@ -83,7 +80,7 @@ void FileProcessWorker::process()
             sourceFile.unmap(mapped_file);
             resultFile.unmap(mapped_result_file);
             value = 100.0;
-            emit progress(int(value));
+            emit progress(int(value), this->fileContext->progressBar);
 
             resultFile.close();
         }

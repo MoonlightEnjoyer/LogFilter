@@ -1,9 +1,4 @@
 #include "mainwindow.h"
-#include <QApplication>
-#include <QFileDialog>
-#include <QGridLayout>
-#include <QPushButton>
-
 
 int main(int argc, char *argv[])
 {
