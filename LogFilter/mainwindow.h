@@ -1,19 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QGridLayout>
 #include <QTextEdit>
 #include <QTabWidget>
-#include <QApplication>
 #include <QPushButton>
 #include <QFileDialog>
-#include <QString>
-#include <QTabWidget>
-#include <QWidget>
-#include <QProgressBar>
-#include <QThread>
-#include <QFile>
 #include <QLineEdit>
 #include <iostream>
 #include <fstream>
@@ -37,7 +28,7 @@ public:
     ~MainWindow();
 public slots:
     void openFile();
-    void updateProgressBar(int value, QProgressBar* progressBar);
+    void updateProgressBar(int value, QLineEdit* lineEdit);
 private:
     Ui::MainWindow *ui;
     QPushButton* openFileButton;

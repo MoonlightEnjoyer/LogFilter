@@ -3,7 +3,6 @@
 
 #include <QTextEdit>
 #include <QString>
-#include <QProgressBar>
 #include <QThread>
 #include <string>
 #include <iostream>
@@ -22,7 +21,6 @@ public:
     std::string sourceFilePath;
     QLineEdit* filterTextEdit;
     QTextEdit* tabTextEdit;
-    QProgressBar* progressBar;
     QThread* workerThread;
     FileProcessWorker* worker;
 

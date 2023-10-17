@@ -71,7 +71,7 @@ void FileProcessWorker::process()
                 sourceFile.unmap(mapped_file);
                 resultFile.unmap(mapped_result_file);
 
-                emit progress(int(value), this->fileContext->progressBar);
+                emit progress(int(value), this->fileContext->filterTextEdit);
             }
             resultFile.close();
         }

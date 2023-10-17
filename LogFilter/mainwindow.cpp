@@ -10,10 +10,17 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(openFileButton, &QPushButton::released, this, &MainWindow::openFile);
 }
 
-void MainWindow::updateProgressBar(int value, QProgressBar* progressBar)
+void MainWindow::updateProgressBar(int value, QLineEdit* lineEdit)
 {
-    progressBar->setValue(value);
-    progressBar->setFormat(QString::number(value) + " %");
+    QString color = value == 100.0 ? "#41f970" : "#f99e41";
+    QPalette palette = lineEdit->palette();
+    QRectF qrect = QRectF(lineEdit->rect());
+    QLinearGradient gradient = QLinearGradient(qrect.topLeft(), qrect.topRight());
+    gradient.setColorAt((double)value / 100.0 - 0.001, QColor(color));
+    gradient.setColorAt((double)value / 100.0, QColor("#ffffff"));
+    gradient.setColorAt((double)value / 100.0 + 0.001, QColor("#ffffff"));
+    palette.setBrush(QPalette::Base, QBrush(gradient));
+    lineEdit->setPalette(palette);
 }
 
 void MainWindow::openFile()
@@ -30,18 +37,15 @@ void MainWindow::openFile()
         QPushButton* searchButton = new QPushButton();
         searchButton->setText("Search");
         QGridLayout* tabLayout = new QGridLayout();
-        QProgressBar* progressBar = new QProgressBar();
 
         QWidget* tabPage = new QWidget();
         tabPage->setLayout(tabLayout);
 
         tabLayout->addWidget(tabFilterTextEdit, 0, 0);
         tabLayout->addWidget(searchButton, 0, 1);
-        tabLayout->addWidget(progressBar, 1, 0, 1, 2);
-        tabLayout->addWidget(tabFileTextEdit, 2, 0, 1, 2);
+        tabLayout->addWidget(tabFileTextEdit, 1, 0, 1, 2);
         tabLayout->setRowStretch(0, 15);
-        tabLayout->setRowStretch(1, 15);
-        tabLayout->setRowStretch(2, 100);
+        tabLayout->setRowStretch(1, 100);
 
         tabWidget->addTab(tabPage, splittedName.constLast());
 
@@ -49,7 +53,6 @@ void MainWindow::openFile()
         newFileContext->tabTextEdit = tabFileTextEdit;
         newFileContext->filterTextEdit = tabFilterTextEdit;
         newFileContext->sourceFilePath = fileName.toStdString();
-        newFileContext->progressBar = progressBar;
 
         QThread* thread = new QThread();
         FileProcessWorker* worker = new FileProcessWorker();

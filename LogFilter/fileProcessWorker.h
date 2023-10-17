@@ -20,7 +20,7 @@ public:
 public slots:
     void process();
 signals:
-    void progress(int, QProgressBar*);
+    void progress(int, QLineEdit*);
 };
 
 #endif // FILEPROCESSWORKER_H
