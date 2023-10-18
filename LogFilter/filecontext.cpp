@@ -1,4 +1,7 @@
+#include <QThread>
+#include <QFileDialog>
 #include "filecontext.h"
+#include "fileProcessWorker.h"
 
 void FileContext::search()
 {

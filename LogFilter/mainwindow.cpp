@@ -1,24 +1,32 @@
+#include <QTextEdit>
+#include <QTabWidget>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QLineEdit>
+#include <iostream>
+#include <fstream>
+#include <string>
 #include "mainwindow.h"
+#include "fileProcessWorker.h"
+#include "filecontext.h"
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     mainTextEdit = this->centralWidget()->findChild<QTextEdit*>("mainTextEdit");
     openFileButton = this->centralWidget()->findChild<QPushButton*>("openFileButton");
     tabWidget = this->centralWidget()->findChild<QTabWidget*>("tabWidget");
     connect(openFileButton, &QPushButton::released, this, &MainWindow::openFile);
 }
 
-void MainWindow::updateProgressBar(int value, QLineEdit* lineEdit)
+void MainWindow::updateProgressBar(double value, QLineEdit* lineEdit)
 {
-    QString color = value == 100.0 ? "#41f970" : "#f99e41";
     QPalette palette = lineEdit->palette();
     QRectF qrect = QRectF(lineEdit->rect());
     QLinearGradient gradient = QLinearGradient(qrect.topLeft(), qrect.topRight());
-    gradient.setColorAt((double)value / 100.0 - 0.001, QColor(color));
-    gradient.setColorAt((double)value / 100.0, QColor("#ffffff"));
-    gradient.setColorAt((double)value / 100.0 + 0.001, QColor("#ffffff"));
+    gradient.setColorAt(value - 0.001, value == 1.0 ? QColor(65, 249, 112, 128) : QColor(249, 158, 65, 128));
+    gradient.setColorAt(value, QColor(255, 255, 255));
+    gradient.setColorAt(value + 0.001, QColor(255, 255, 255));
     palette.setBrush(QPalette::Base, QBrush(gradient));
     lineEdit->setPalette(palette);
 }
@@ -27,7 +35,6 @@ void MainWindow::openFile()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
 
-    using namespace std;
     for (const auto& fileName : fileNames)
     {
         QTextEdit* tabFileTextEdit = new QTextEdit();
@@ -64,9 +71,9 @@ void MainWindow::openFile()
         connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);
         connect(searchButton, &QPushButton::released, newFileContext, &FileContext::search);
 
-        ifstream file;
+        std::ifstream file;
         file.open(fileName.toStdString());
-        string line;
+        std::string line;
 
         if (file.is_open())
         {

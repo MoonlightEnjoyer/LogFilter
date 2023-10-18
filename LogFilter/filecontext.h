@@ -2,13 +2,9 @@
 #define FILECONTEXT_H
 
 #include <QTextEdit>
-#include <QString>
 #include <QThread>
 #include <string>
 #include <iostream>
-#include <fstream>
-#include "simpleregex.h"
-#include "mainwindow.h"
 #include "fileProcessWorker.h"
 #include <QLineEdit>
 

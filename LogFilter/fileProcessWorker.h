@@ -2,9 +2,9 @@
 #define FILEPROCESSWORKER_H
 
 #include <QString>
+#include <QLineEdit>
 #include <iostream>
 #include "filecontext.h"
-#include "simpleregex.h"
 
 class FileContext;
 
@@ -16,11 +16,11 @@ public:
     QString resultFileName;
     FileProcessWorker() {}
     virtual ~FileProcessWorker() {}
-    static std::int64_t processFile(FileContext*, uchar*, uchar*, std::int64_t);
+    std::int64_t processFile(FileContext*, uchar*, uchar*, std::int64_t,  std::int64_t, std::int64_t);
 public slots:
     void process();
 signals:
-    void progress(int, QLineEdit*);
+    void progress(double, QLineEdit*);
 };
 
 #endif // FILEPROCESSWORKER_H

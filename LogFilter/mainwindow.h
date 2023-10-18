@@ -4,14 +4,8 @@
 #include <QTextEdit>
 #include <QTabWidget>
 #include <QPushButton>
-#include <QFileDialog>
 #include <QLineEdit>
-#include <iostream>
-#include <fstream>
-#include <string>
 #include "ui_mainwindow.h"
-#include "fileProcessWorker.h"
-#include "filecontext.h"
 
 class FileContext;
 
@@ -28,7 +22,7 @@ public:
     ~MainWindow();
 public slots:
     void openFile();
-    void updateProgressBar(int value, QLineEdit* lineEdit);
+    void updateProgressBar(double value, QLineEdit* lineEdit);
 private:
     Ui::MainWindow *ui;
     QPushButton* openFileButton;
