@@ -3,27 +3,27 @@
 #include "fileProcessWorker.h"
 #include "simpleregex.h"
 
-std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* mapped_file, uchar* mapped_result_file, std::int64_t mapped_size, std::int64_t processedCurrent, std::int64_t totalSize)
+std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* sourceMemory, uchar* resultMemory, std::int64_t bytesMapped, std::int64_t processedBytes, std::int64_t totalSize)
 {
-    std::string filter_regex_s(currentContext->filterTextEdit->text().toStdString());
-    const int regexSize = filter_regex_s.size();
-    char* filter_regex = (char*)filter_regex_s.c_str();    uchar* memoryWriteStart = mapped_result_file;
+    std::string filter_regex_string(currentContext->filterTextEdit->text().toStdString());
+    const int regexSize = filter_regex_string.size();
+    char* filter_regex_char = (char*)filter_regex_string.c_str();
     std::int64_t matchCounter = 0;
 
-    for (std::int64_t i = 0; i < mapped_size; i++)
+    for (std::int64_t i = 0; i < bytesMapped; i++)
     {
-        for (std::int64_t j = i; j < mapped_size; j++)
+        for (std::int64_t j = i; j < bytesMapped; j++)
         {
-            if (mapped_file[j] == '\r' || mapped_file[j] == '\n')
+            if (sourceMemory[j] == '\r' || sourceMemory[j] == '\n')
             {
-                if (j + 1 < mapped_size && mapped_file[j + 1] == '\n')
+                if (j + 1 < bytesMapped && sourceMemory[j + 1] == '\n')
                 {
                     j++;
                 }
 
-                if (SimpleRegex::Match((char*)(mapped_file + i), 0, j - i, filter_regex, regexSize))
+                if (SimpleRegex::Match((char*)(sourceMemory + i), 0, j - i, filter_regex_char, regexSize))
                 {
-                    std::copy(mapped_file + i, mapped_file + j + 1, memoryWriteStart + matchCounter);
+                    std::copy(sourceMemory + i, sourceMemory + j + 1, resultMemory + matchCounter);
                     matchCounter += (j - i + 1);
                 }
 
@@ -31,10 +31,8 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
                 break;
             }
         }
-
-        emit progress((double)(processedCurrent + i + 1) / (double)totalSize, currentContext->filterTextEdit);
+        emit progress((double)(processedBytes + i + 1) / (double)totalSize, currentContext->filterTextEdit);
     }
-
     return matchCounter;
 }
 
@@ -52,21 +50,21 @@ void FileProcessWorker::process()
     {
         if (resultFile.open(QIODevice::ReadWrite))
         {
-            const std::int64_t mapped_size = (std::int64_t)2 * (std::int64_t)1024 * (std::int64_t)1024 * (std::int64_t)1024;
+            const std::int64_t defaultMapSize = (std::int64_t)2 * (std::int64_t)1024 * (std::int64_t)1024 * (std::int64_t)1024;
             uchar* mapped_file;
             uchar* mapped_result_file;
             std::int64_t mapped_total;
             std::int64_t matchCounter = 0;
-            std::int64_t mappedReal;
+            std::int64_t bytesMapped;
 
-            for (mapped_total = 0; mapped_total <= sourceFile.size(); mapped_total += mapped_size)
+            for (mapped_total = 0; mapped_total <= sourceFile.size(); mapped_total += defaultMapSize)
             {
-                mappedReal = ((mapped_total + mapped_size) <= sourceFile.size()) ? mapped_size : (sourceFile.size() - mapped_total);
-                mapped_file = sourceFile.map(mapped_total, mappedReal);
-                mapped_result_file = resultFile.map(sizeCounter, mappedReal);
-                matchCounter = processFile(this->fileContext, mapped_file, mapped_result_file, mappedReal, mapped_total, sourceFile.size());
+                bytesMapped = ((mapped_total + defaultMapSize) <= sourceFile.size()) ? defaultMapSize : (sourceFile.size() - mapped_total);
+                mapped_file = sourceFile.map(mapped_total, bytesMapped);
+                mapped_result_file = resultFile.map(sizeCounter, bytesMapped);
+                matchCounter = processFile(this->fileContext, mapped_file, mapped_result_file, bytesMapped, mapped_total, sourceFile.size());
                 sizeCounter += matchCounter;
-                for (std::int64_t f = mappedReal - 1; f > 0 && mapped_file[f] != '\n' && mapped_file[f] != '\r'; f--, mapped_total--)
+                for (std::int64_t f = bytesMapped - 1; f > 0 && mapped_file[f] != '\n' && mapped_file[f] != '\r'; f--, mapped_total--)
                 {
                 }
                 sourceFile.unmap(mapped_file);

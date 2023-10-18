@@ -24,7 +24,7 @@ void MainWindow::updateProgressBar(double value, QLineEdit* lineEdit)
     QPalette palette = lineEdit->palette();
     QRectF qrect = QRectF(lineEdit->rect());
     QLinearGradient gradient = QLinearGradient(qrect.topLeft(), qrect.topRight());
-    gradient.setColorAt(value - 0.001, value == 1.0 ? QColor(65, 249, 112, 128) : QColor(249, 158, 65, 128));
+    gradient.setColorAt(value - 0.001, value == 1.0 ? QColor(65, 249, 112, 100) : QColor(249, 158, 65, 100));
     gradient.setColorAt(value, QColor(255, 255, 255));
     gradient.setColorAt(value + 0.001, QColor(255, 255, 255));
     palette.setBrush(QPalette::Base, QBrush(gradient));
