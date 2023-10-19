@@ -24,6 +24,16 @@ FileContext::FileContext(
     this->getLineLength();
 }
 
+FileContext::~FileContext()
+{
+    this->workerThread->terminate();
+    delete this->filterTextEdit;
+    delete this->tabTextEdit;
+    delete this->workerThread;
+    delete this->pageSpinBox;
+    delete this->worker;
+}
+
 void FileContext::search()
 {
     QString resultFileName = QFileDialog::getSaveFileName();

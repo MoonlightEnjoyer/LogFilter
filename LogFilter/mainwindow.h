@@ -23,11 +23,9 @@ public:
 public slots:
     void openFile();
     void updateProgressBar(double value, QLineEdit* lineEdit);
+    void closeTab(int index);
 private:
     Ui::MainWindow *ui;
-    QPushButton* openFileButton;
-    QTextEdit* mainTextEdit;
-    QTabWidget* tabWidget;
 };
 
 #endif // MAINWINDOW_H

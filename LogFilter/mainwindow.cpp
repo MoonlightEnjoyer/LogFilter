@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <climits>
+#include <QAction>
 #include "mainwindow.h"
 #include "fileProcessWorker.h"
 #include "filecontext.h"
@@ -16,10 +17,8 @@
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    mainTextEdit = this->centralWidget()->findChild<QTextEdit*>("mainTextEdit");
-    openFileButton = this->centralWidget()->findChild<QPushButton*>("openFileButton");
-    tabWidget = this->centralWidget()->findChild<QTabWidget*>("tabWidget");
-    connect(openFileButton, &QPushButton::released, this, &MainWindow::openFile);
+    connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::openFile);
+    connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
 }
 
 void MainWindow::updateProgressBar(double value, QLineEdit* lineEdit)
@@ -32,6 +31,11 @@ void MainWindow::updateProgressBar(double value, QLineEdit* lineEdit)
     gradient.setColorAt(value + 0.001, QColor(255, 255, 255));
     palette.setBrush(QPalette::Base, QBrush(gradient));
     lineEdit->setPalette(palette);
+}
+
+void MainWindow::closeTab(int index)
+{
+    ui->tabWidget->removeTab(index);
 }
 
 void MainWindow::openFile()
@@ -60,8 +64,8 @@ void MainWindow::openFile()
 
         QSpinBox* pageSpinBox = new QSpinBox();
         pageSpinBox->setValue(1);
-        pageSpinBox->setMaximum(1);
-        pageSpinBox->setMaximum(INT_MAX);
+        pageSpinBox->setMinimum(1);
+        pageSpinBox->setMaximum(INT32_MAX);
 
         QHBoxLayout* horLayout = new QHBoxLayout();
 
@@ -77,7 +81,7 @@ void MainWindow::openFile()
         tabLayout->setRowStretch(0, 15);
         tabLayout->setRowStretch(1, 100);
 
-        tabWidget->addTab(tabPage, splittedName.constLast());
+        ui->tabWidget->addTab(tabPage, splittedName.constLast());
 
         QThread* thread = new QThread();
         FileProcessWorker* worker = new FileProcessWorker();
@@ -90,7 +94,6 @@ void MainWindow::openFile()
         connect(openPageButton, &QPushButton::released, newFileContext, &FileContext::getPage);
         connect(nextPageButton, &QPushButton::released, newFileContext, &FileContext::getNextPage);
         connect(prevPageButton, &QPushButton::released, newFileContext, &FileContext::getPrevPage);
-
 
         newFileContext->getPage();
     }

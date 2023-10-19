@@ -35,6 +35,8 @@ public:
     std::int64_t pageEndPos = 0;
     void getLineLength();
 
+    ~FileContext();
+
 public slots:
     void search();
     void getPage();
