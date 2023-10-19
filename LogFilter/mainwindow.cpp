@@ -35,6 +35,9 @@ void MainWindow::updateProgressBar(double value, QLineEdit* lineEdit)
 
 void MainWindow::closeTab(int index)
 {
+    std::cout<< "closing tab: " << index << std::endl;
+    FileContext* tabToRemove = (FileContext*)ui->tabWidget->widget(index);
+    tabToRemove->deleteLater();
     ui->tabWidget->removeTab(index);
 }
 
@@ -52,8 +55,17 @@ void MainWindow::openFile()
         searchButton->setText("Search");
         QGridLayout* tabLayout = new QGridLayout();
 
-        QWidget* tabPage = new QWidget();
-        tabPage->setLayout(tabLayout);
+        QSpinBox* pageSpinBox = new QSpinBox();
+        pageSpinBox->setValue(1);
+        pageSpinBox->setMinimum(1);
+        pageSpinBox->setMaximum(INT32_MAX);
+
+        QThread* thread = new QThread();
+        FileProcessWorker* worker = new FileProcessWorker();
+
+        FileContext* newFileContext = new FileContext(fileName.toStdString(), tabFilterTextEdit, tabFileTextEdit, thread, pageSpinBox, worker);
+
+        newFileContext->setLayout(tabLayout);
 
         QPushButton* openPageButton = new QPushButton();
         openPageButton->setText("Open page");
@@ -62,10 +74,7 @@ void MainWindow::openFile()
         QPushButton* nextPageButton = new QPushButton();
         nextPageButton->setText("Next page");
 
-        QSpinBox* pageSpinBox = new QSpinBox();
-        pageSpinBox->setValue(1);
-        pageSpinBox->setMinimum(1);
-        pageSpinBox->setMaximum(INT32_MAX);
+
 
         QHBoxLayout* horLayout = new QHBoxLayout();
 
@@ -81,12 +90,8 @@ void MainWindow::openFile()
         tabLayout->setRowStretch(0, 15);
         tabLayout->setRowStretch(1, 100);
 
-        ui->tabWidget->addTab(tabPage, splittedName.constLast());
+        ui->tabWidget->addTab(newFileContext, splittedName.constLast());
 
-        QThread* thread = new QThread();
-        FileProcessWorker* worker = new FileProcessWorker();
-
-        FileContext* newFileContext = new FileContext(fileName.toStdString(), tabFilterTextEdit, tabFileTextEdit, thread, pageSpinBox, worker);
 
         connect(thread, &QThread::started, worker, &FileProcessWorker::process);
         connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);

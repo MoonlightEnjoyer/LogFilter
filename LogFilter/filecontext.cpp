@@ -8,14 +8,14 @@
 
 FileContext::FileContext(
     std::string sourceFilePath,
-    QLineEdit* filterTextEdit,
+    QLineEdit* filterLineEdit,
     QTextEdit* tabTextEdit,
     QThread* workerThread,
     QSpinBox* pageSpinBox,
     FileProcessWorker* worker)
 {
     this->sourceFilePath = sourceFilePath;
-    this->filterTextEdit = filterTextEdit;
+    this->filterLineEdit = filterLineEdit;
     this->tabTextEdit = tabTextEdit;
     this->workerThread = workerThread;
     this->pageSpinBox = pageSpinBox;
@@ -26,8 +26,9 @@ FileContext::FileContext(
 
 FileContext::~FileContext()
 {
-    this->workerThread->terminate();
-    delete this->filterTextEdit;
+    this->workerThread->requestInterruption();
+    this->workerThread->wait();
+    delete this->filterLineEdit;
     delete this->tabTextEdit;
     delete this->workerThread;
     delete this->pageSpinBox;

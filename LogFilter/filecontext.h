@@ -4,6 +4,7 @@
 #include <QTextEdit>
 #include <QThread>
 #include <QSpinBox>
+#include <QTabWidget>
 #include <string>
 #include <iostream>
 #include "fileProcessWorker.h"
@@ -11,7 +12,7 @@
 
 class FileProcessWorker;
 
-class FileContext : public QObject
+class FileContext : public QWidget
 {
     Q_OBJECT
 public:
@@ -23,7 +24,7 @@ public:
         QSpinBox* pageSpinBox,
         FileProcessWorker* worker);
     std::string sourceFilePath;
-    QLineEdit* filterTextEdit;
+    QLineEdit* filterLineEdit;
     QTextEdit* tabTextEdit;
     QThread* workerThread;
     QSpinBox* pageSpinBox;
