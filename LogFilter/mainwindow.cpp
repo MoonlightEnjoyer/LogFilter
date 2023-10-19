@@ -79,24 +79,19 @@ void MainWindow::openFile()
 
         tabWidget->addTab(tabPage, splittedName.constLast());
 
-        FileContext* newFileContext = new FileContext();
-        newFileContext->tabTextEdit = tabFileTextEdit;
-        newFileContext->filterTextEdit = tabFilterTextEdit;
-        newFileContext->sourceFilePath = fileName.toStdString();
-        newFileContext->pageSpinBox = pageSpinBox;
-
         QThread* thread = new QThread();
         FileProcessWorker* worker = new FileProcessWorker();
 
-        newFileContext->workerThread = thread;
-        newFileContext->worker = worker;
+        FileContext* newFileContext = new FileContext(fileName.toStdString(), tabFilterTextEdit, tabFileTextEdit, thread, pageSpinBox, worker);
 
         connect(thread, &QThread::started, worker, &FileProcessWorker::process);
         connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);
         connect(searchButton, &QPushButton::released, newFileContext, &FileContext::search);
         connect(openPageButton, &QPushButton::released, newFileContext, &FileContext::getPage);
+        connect(nextPageButton, &QPushButton::released, newFileContext, &FileContext::getNextPage);
+        connect(prevPageButton, &QPushButton::released, newFileContext, &FileContext::getPrevPage);
 
-        newFileContext->getLineLength();
+
         newFileContext->getPage();
     }
 }

@@ -6,6 +6,24 @@
 #include "filecontext.h"
 #include "fileProcessWorker.h"
 
+FileContext::FileContext(
+    std::string sourceFilePath,
+    QLineEdit* filterTextEdit,
+    QTextEdit* tabTextEdit,
+    QThread* workerThread,
+    QSpinBox* pageSpinBox,
+    FileProcessWorker* worker)
+{
+    this->sourceFilePath = sourceFilePath;
+    this->filterTextEdit = filterTextEdit;
+    this->tabTextEdit = tabTextEdit;
+    this->workerThread = workerThread;
+    this->pageSpinBox = pageSpinBox;
+    this->worker = worker;
+
+    this->getLineLength();
+}
+
 void FileContext::search()
 {
     QString resultFileName = QFileDialog::getSaveFileName();
@@ -39,7 +57,9 @@ void FileContext::getPage()
 
     std::ifstream sourceFile(this->sourceFilePath);
 
-    std::int64_t value = this->pageSpinBox->value() - 1;
+    unsigned int value = this->pageSpinBox->value() - 1;
+
+    this->page = value + 1;
 
     if (value < 0 || value * this->pageSize >= std::filesystem::file_size(this->sourceFilePath))
     {
@@ -60,9 +80,88 @@ void FileContext::getPage()
 
     this->tabTextEdit->clear();
 
+    this->pageStartPos = sourceFile.tellg();
+
     for (int i = 0; i < this->pageSize && getline(sourceFile, line); i++)
     {
         this->tabTextEdit->append(QString::fromStdString(line));
     }
 
+    this->pageEndPos = sourceFile.tellg();
+
+    sourceFile.close();
+}
+
+void FileContext::getPrevPage()
+{
+    std::cout << "Page(prev): " << this->page << std::endl;
+
+    std::ifstream sourceFile(this->sourceFilePath);
+
+    if (this->page <= 1)
+    {
+        sourceFile.close();
+        return;
+    }
+
+    this->page--;
+
+    this->pageSpinBox->setValue(this->page);
+
+    sourceFile.seekg(this->pageEndPos);
+
+    std::string line;
+
+    this->tabTextEdit->clear();
+
+    int counter = 0;
+
+    for (int i = this->pageStartPos; i >= 0 && counter <= this->pageSize + 1; i--)
+    {
+        sourceFile.seekg(i);
+        if (sourceFile.peek() == '\n')
+        {
+            counter++;
+        }
+    }
+
+    this->pageEndPos = this->pageStartPos;
+
+    this->pageStartPos = sourceFile.tellg();
+
+    for (int i = 0; i < this->pageSize && getline(sourceFile, line); i++)
+    {
+        this->tabTextEdit->append(QString::fromStdString(line));
+    }
+
+    this->pageEndPos = sourceFile.tellg();
+
+    sourceFile.close();
+}
+
+void FileContext::getNextPage()
+{
+    std::cout << "Page(next): " << this->page << std::endl;
+    std::ifstream sourceFile(this->sourceFilePath);
+
+    this->page++;
+
+    this->pageSpinBox->setValue(this->page);
+
+    sourceFile.seekg(this->pageEndPos);
+
+    std::string line;
+
+    this->tabTextEdit->clear();
+
+    this->pageStartPos = this->pageEndPos;
+
+    for (int i = 0; i < this->pageSize && getline(sourceFile, line); i++)
+    {
+        this->tabTextEdit->append(QString::fromStdString(line));
+    }
+
+    this->pageEndPos = sourceFile.tellg();
+
+    sourceFile.close();
 }
