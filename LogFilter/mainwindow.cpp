@@ -3,9 +3,12 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QLineEdit>
+#include <QSpinBox>
+#include <QHBoxLayout>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <climits>
 #include "mainwindow.h"
 #include "fileProcessWorker.h"
 #include "filecontext.h"
@@ -48,9 +51,29 @@ void MainWindow::openFile()
         QWidget* tabPage = new QWidget();
         tabPage->setLayout(tabLayout);
 
+        QPushButton* openPageButton = new QPushButton();
+        openPageButton->setText("Open page");
+        QPushButton* prevPageButton = new QPushButton();
+        prevPageButton->setText("Prev page");
+        QPushButton* nextPageButton = new QPushButton();
+        nextPageButton->setText("Next page");
+
+        QSpinBox* pageSpinBox = new QSpinBox();
+        pageSpinBox->setValue(1);
+        pageSpinBox->setMaximum(1);
+        pageSpinBox->setMaximum(INT_MAX);
+
+        QHBoxLayout* horLayout = new QHBoxLayout();
+
+        horLayout->addWidget(prevPageButton);
+        horLayout->addWidget(nextPageButton);
+        horLayout->addWidget(pageSpinBox);
+        horLayout->addWidget(openPageButton);
+
         tabLayout->addWidget(tabFilterTextEdit, 0, 0);
         tabLayout->addWidget(searchButton, 0, 1);
         tabLayout->addWidget(tabFileTextEdit, 1, 0, 1, 2);
+        tabLayout->addLayout(horLayout, 2, 0);
         tabLayout->setRowStretch(0, 15);
         tabLayout->setRowStretch(1, 100);
 
@@ -60,6 +83,7 @@ void MainWindow::openFile()
         newFileContext->tabTextEdit = tabFileTextEdit;
         newFileContext->filterTextEdit = tabFilterTextEdit;
         newFileContext->sourceFilePath = fileName.toStdString();
+        newFileContext->pageSpinBox = pageSpinBox;
 
         QThread* thread = new QThread();
         FileProcessWorker* worker = new FileProcessWorker();
@@ -70,20 +94,10 @@ void MainWindow::openFile()
         connect(thread, &QThread::started, worker, &FileProcessWorker::process);
         connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);
         connect(searchButton, &QPushButton::released, newFileContext, &FileContext::search);
+        connect(openPageButton, &QPushButton::released, newFileContext, &FileContext::getPage);
 
-        std::ifstream file;
-        file.open(fileName.toStdString());
-        std::string line;
-
-        if (file.is_open())
-        {
-            for (int i = 0; i < 5 && getline(file, line); i++)
-            {
-                tabFileTextEdit->append(QString::fromStdString(line));
-            }
-
-            file.close();
-        }
+        newFileContext->getLineLength();
+        newFileContext->getPage();
     }
 }
 

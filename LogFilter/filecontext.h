@@ -3,6 +3,7 @@
 
 #include <QTextEdit>
 #include <QThread>
+#include <QSpinBox>
 #include <string>
 #include <iostream>
 #include "fileProcessWorker.h"
@@ -18,10 +19,16 @@ public:
     QLineEdit* filterTextEdit;
     QTextEdit* tabTextEdit;
     QThread* workerThread;
+    QSpinBox* pageSpinBox;
     FileProcessWorker* worker;
+    unsigned int lineLength = 0;
+    unsigned int pageSize = 10000;
+    unsigned int page = 1;
+    void getLineLength();
 
 public slots:
     void search();
+    void getPage();
 };
 
 #endif // FILECONTEXT_H
