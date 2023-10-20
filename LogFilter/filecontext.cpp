@@ -27,7 +27,9 @@ FileContext::FileContext(
 FileContext::~FileContext()
 {
     this->workerThread->requestInterruption();
+    std::cout << "isRunning: " << this->workerThread->isRunning() << std::endl;
     this->workerThread->wait();
+    std::cout << "isRunning after wait: " << this->workerThread->isRunning() << std::endl;
     delete this->filterLineEdit;
     delete this->tabTextEdit;
     delete this->workerThread;

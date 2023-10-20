@@ -38,7 +38,7 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
             }
         }
 
-        if (i - i_prev >= totalSize * 0.01)
+        if (i - i_prev >= totalSize * 0.01 || i == bytesMapped - 1)
         {
             i_prev = i;
             emit progress((double)(processedBytes + i + 1) / (double)totalSize, currentContext->filterLineEdit);
@@ -95,4 +95,6 @@ void FileProcessWorker::process()
         sourceFile.close();
     }
     std::filesystem::resize_file(resultFileName.toStdString(), sizeCounter);
+
+    this->thread()->quit();
 }

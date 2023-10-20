@@ -74,8 +74,6 @@ void MainWindow::openFile()
         QPushButton* nextPageButton = new QPushButton();
         nextPageButton->setText("Next page");
 
-
-
         QHBoxLayout* horLayout = new QHBoxLayout();
 
         horLayout->addWidget(prevPageButton);
