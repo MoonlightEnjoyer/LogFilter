@@ -48,7 +48,9 @@ void MainWindow::openFile()
     for (const auto& fileName : fileNames)
     {
         QTextEdit* tabFileTextEdit = new QTextEdit();
+        QTextEdit* tabResultsTextEdit = new QTextEdit();
         tabFileTextEdit->setLineWrapMode(QTextEdit::LineWrapMode::NoWrap);
+        tabResultsTextEdit->setLineWrapMode(QTextEdit::LineWrapMode::NoWrap);
         QLineEdit* tabFilterTextEdit = new QLineEdit();
         QStringList splittedName = fileName.split('/');
         QPushButton* searchButton = new QPushButton();
@@ -85,11 +87,12 @@ void MainWindow::openFile()
         tabLayout->addWidget(searchButton, 0, 1);
         tabLayout->addWidget(tabFileTextEdit, 1, 0, 1, 2);
         tabLayout->addLayout(horLayout, 2, 0);
+        tabLayout->addWidget(tabResultsTextEdit, 3, 0, 1, 2);
         tabLayout->setRowStretch(0, 15);
         tabLayout->setRowStretch(1, 100);
+        tabLayout->setRowStretch(3, 40);
 
         ui->tabWidget->addTab(newFileContext, splittedName.constLast());
-
 
         connect(thread, &QThread::started, worker, &FileProcessWorker::process);
         connect(worker, &FileProcessWorker::progress, this, &MainWindow::updateProgressBar);

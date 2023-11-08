@@ -3,3 +3,5 @@
 **/LogFilter/CMakeFiles/**
 **/LogFilter/LogFilter_autogen/**
 **/LogFilter/cmake_install.cmake
+**/re2_win/**
+**/re2_lin/**
