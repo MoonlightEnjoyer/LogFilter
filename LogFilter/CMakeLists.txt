@@ -17,13 +17,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 
-message("Before variables set")
-
-#set(CMAKE_CXX_FLAGS "-I\ /home/dude/Desktop/LogFilter/LogFilter/re2_win/abseil-cpp/")
-#set(absl_DIR "/home/dude/Desktop/LogFilter/LogFilter/re2_win/abseil-cpp/")
-
-find_package(absl)
-find_package(re2)
 
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
@@ -46,8 +39,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         filecontext.h
         filecontext.cpp
-        simpleregex.cpp
-        simpleregex.h
+
+
         fileProcessWorker.h
         fileProcessWorker.cpp
     )
@@ -74,8 +67,6 @@ endif()
 include_directories(/home/dude/Desktop/hyperscan/src/)
 
 target_link_libraries(LogFilter PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
-target_link_libraries(LogFilter PRIVATE re2)
 
 target_link_libraries(LogFilter PRIVATE "/home/dude/Desktop/hyperscan/build/lib/libhs.a")
 

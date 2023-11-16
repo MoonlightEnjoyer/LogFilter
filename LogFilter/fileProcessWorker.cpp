@@ -1,16 +1,7 @@
 #include <QFile>
 #include <fstream>
 #include "fileProcessWorker.h"
-#include "simpleregex.h"
-#include <re2/re2.h>
 #include <hs.h>
-
-//*
-// * This is the function that will be called for each match that occurs. @a ctx
-// * is to allow you to have some application-specific state that you will get
-// * access to for each match. In our simple example we're just going to use it
-// * to pass in the pattern that was being searched for so we can print it out.
-
 
 static int eventHandler(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *ctx)
 {
@@ -23,8 +14,6 @@ static int eventHandler(unsigned int id, unsigned long long from, unsigned long 
 
 std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* sourceMemory, uchar* resultMemory, std::int64_t bytesMapped, std::int64_t processedBytes, std::int64_t totalSize)
 {
-    RE2 filter_regex("(" + currentContext->filterLineEdit->text().toStdString() + ")");
-
     std::int64_t i_prev = 0;
 
     std::int64_t* context = new std::int64_t[3];
@@ -84,7 +73,6 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
                     return -1;
                 }
 
-                //matchCounter += (j - i + 1) * RE2::PartialMatch((char*)(resultMemory + matchCounter), filter_regex, (void*)NULL);
 
                 i = j;
                 break;
