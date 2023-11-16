@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.8)
 
+include(CMakePrintHelpers)
+
 project(LogFilter VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -13,9 +17,19 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 
+message("Before variables set")
+
+#set(CMAKE_CXX_FLAGS "-I\ /home/dude/Desktop/LogFilter/LogFilter/re2_win/abseil-cpp/")
+#set(absl_DIR "/home/dude/Desktop/LogFilter/LogFilter/re2_win/abseil-cpp/")
+
+find_package(absl)
+find_package(re2)
+
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+message("After find packages")
 
 set(PROJECT_SOURCES
         main.cpp
@@ -57,7 +71,13 @@ else()
     endif()
 endif()
 
+include_directories(/home/dude/Desktop/hyperscan/src/)
+
 target_link_libraries(LogFilter PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+target_link_libraries(LogFilter PRIVATE re2)
+
+target_link_libraries(LogFilter PRIVATE "/home/dude/Desktop/hyperscan/build/lib/libhs.a")
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

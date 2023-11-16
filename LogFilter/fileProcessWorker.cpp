@@ -2,14 +2,55 @@
 #include <fstream>
 #include "fileProcessWorker.h"
 #include "simpleregex.h"
+#include <re2/re2.h>
+#include <hs.h>
+
+//*
+// * This is the function that will be called for each match that occurs. @a ctx
+// * is to allow you to have some application-specific state that you will get
+// * access to for each match. In our simple example we're just going to use it
+// * to pass in the pattern that was being searched for so we can print it out.
+
+
+static int eventHandler(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *ctx)
+{
+    //std::cout << "Match for pattern \"" << (char *)ctx << "\" at (" << from << " : " << to << ")" << std::endl;
+
+    std::int64_t* context = (std::int64_t*)ctx;
+    context[0] += (context[1] - context[2] + 1);
+    return 0;
+}
 
 std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* sourceMemory, uchar* resultMemory, std::int64_t bytesMapped, std::int64_t processedBytes, std::int64_t totalSize)
 {
-    std::string filter_regex_string(currentContext->filterLineEdit->text().toStdString());
-    const int regexSize = filter_regex_string.size();
-    char* filter_regex_char = (char*)filter_regex_string.c_str();
-    std::int64_t matchCounter = 0;
+    RE2 filter_regex("(" + currentContext->filterLineEdit->text().toStdString() + ")");
+
     std::int64_t i_prev = 0;
+
+    std::int64_t* context = new std::int64_t[3];
+
+    std::int64_t* matchCounter = context;
+    *matchCounter = 0;
+
+    hs_database_t* database;
+    hs_compile_error* compile_err;
+
+    char* pattern = (char*)currentContext->filterLineEdit->text().toStdString().c_str();
+
+    if (hs_compile(pattern, HS_FLAG_DOTALL, HS_MODE_BLOCK, NULL, &database,
+                   &compile_err) != HS_SUCCESS) {
+        std::cout << "ERROR: Unable to compile pattern \"" << pattern << "\" : " << compile_err->message << std::endl;
+        hs_free_compile_error(compile_err);
+        return -1;
+    }
+
+    char* input_data;
+    hs_scratch_t *scratch = NULL;
+    if (hs_alloc_scratch(database, &scratch) != HS_SUCCESS) {
+        fprintf(stderr, "ERROR: Unable to allocate scratch space. Exiting.\n");
+        hs_free_database(database);
+        return -1;
+    }
 
     for (std::int64_t i = 0; i < bytesMapped; i++)
     {
@@ -27,11 +68,23 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
                     j++;
                 }
 
-                if (SimpleRegex::Match((char*)(sourceMemory + i), 0, j - i, filter_regex_char, regexSize))
+                std::copy(sourceMemory + i, sourceMemory + j + 1, resultMemory + *matchCounter);
+
+                input_data = (char*)(resultMemory + *matchCounter);
+
+                context[1] = j;
+                context[2] = i;
+
+                if (hs_scan(database, input_data, j - i, 0, scratch, eventHandler, context) != HS_SUCCESS)
                 {
-                    std::copy(sourceMemory + i, sourceMemory + j + 1, resultMemory + matchCounter);
-                    matchCounter += (j - i + 1);
+                    fprintf(stderr, "ERROR: Unable to scan input buffer. Exiting.\n");
+                    hs_free_scratch(scratch);
+                    free(input_data);
+                    hs_free_database(database);
+                    return -1;
                 }
+
+                //matchCounter += (j - i + 1) * RE2::PartialMatch((char*)(resultMemory + matchCounter), filter_regex, (void*)NULL);
 
                 i = j;
                 break;
@@ -45,7 +98,11 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
         }
 
     }
-    return matchCounter;
+
+
+    std::int64_t matchCounterSave = *matchCounter;
+    delete [] context;
+    return matchCounterSave;
 }
 
 void FileProcessWorker::process()
