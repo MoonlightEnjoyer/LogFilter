@@ -5,8 +5,6 @@
 
 static int eventHandler(unsigned int id, unsigned long long from, unsigned long long to, unsigned int flags, void *ctx)
 {
-    //std::cout << "Match for pattern \"" << (char *)ctx << "\" at (" << from << " : " << to << ")" << std::endl;
-
     std::int64_t* context = (std::int64_t*)ctx;
     context[0] += (context[1] - context[2] + 1);
     return 0;
@@ -74,7 +72,6 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
                     return -1;
                 }
 
-
                 i = j;
                 break;
             }
@@ -87,7 +84,6 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
         }
 
     }
-
 
     std::int64_t matchCounterSave = *matchCounter;
     delete [] context;

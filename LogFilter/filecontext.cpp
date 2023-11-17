@@ -27,9 +27,7 @@ FileContext::FileContext(
 FileContext::~FileContext()
 {
     this->workerThread->requestInterruption();
-    std::cout << "isRunning: " << this->workerThread->isRunning() << std::endl;
     this->workerThread->wait();
-    std::cout << "isRunning after wait: " << this->workerThread->isRunning() << std::endl;
     delete this->filterLineEdit;
     delete this->tabTextEdit;
     delete this->workerThread;
@@ -41,10 +39,13 @@ void FileContext::search()
 {
     QString resultFileName = QFileDialog::getSaveFileName();
 
-    this->worker->fileContext = this;
-    this->worker->resultFileName = resultFileName;
-    this->worker->moveToThread(this->workerThread);
-    this->workerThread->start();
+    if (resultFileName.length() > 0)
+    {
+        this->worker->fileContext = this;
+        this->worker->resultFileName = resultFileName;
+        this->worker->moveToThread(this->workerThread);
+        this->workerThread->start();
+    }
 }
 
 void FileContext::getLineLength()

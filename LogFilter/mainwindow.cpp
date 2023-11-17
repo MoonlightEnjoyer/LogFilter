@@ -35,7 +35,6 @@ void MainWindow::updateProgressBar(double value, QLineEdit* lineEdit)
 
 void MainWindow::closeTab(int index)
 {
-    std::cout<< "closing tab: " << index << std::endl;
     FileContext* tabToRemove = (FileContext*)ui->tabWidget->widget(index);
     tabToRemove->deleteLater();
     ui->tabWidget->removeTab(index);
