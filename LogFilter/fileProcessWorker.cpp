@@ -24,7 +24,8 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
     hs_database_t* database;
     hs_compile_error* compile_err;
 
-    char* pattern = (char*)currentContext->filterLineEdit->text().toStdString().c_str();
+    std::string pattern_string = currentContext->filterLineEdit->text().toStdString();
+    char* pattern = (char*)pattern_string.c_str();
 
     if (hs_compile(pattern, HS_FLAG_DOTALL, HS_MODE_BLOCK, NULL, &database,
                    &compile_err) != HS_SUCCESS) {
