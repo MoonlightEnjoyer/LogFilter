@@ -25,8 +25,8 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
     std::string pattern_string = currentContext->filterLineEdit->text().toStdString();
     char* pattern = (char*)pattern_string.c_str();
 
-    if (hs_compile(pattern, HS_FLAG_DOTALL, HS_MODE_BLOCK, NULL, &database,
-                   &compile_err) != HS_SUCCESS) {
+    if (hs_compile(pattern, HS_FLAG_DOTALL, HS_MODE_BLOCK, NULL, &database, &compile_err) != HS_SUCCESS)
+    {
         std::cout << "ERROR: Unable to compile pattern \"" << pattern << "\" : " << compile_err->message << std::endl;
         hs_free_compile_error(compile_err);
         return -1;
@@ -34,7 +34,8 @@ std::int64_t FileProcessWorker::processFile(FileContext* currentContext, uchar* 
 
     char* input_data;
     hs_scratch_t *scratch = NULL;
-    if (hs_alloc_scratch(database, &scratch) != HS_SUCCESS) {
+    if (hs_alloc_scratch(database, &scratch) != HS_SUCCESS)
+    {
         fprintf(stderr, "ERROR: Unable to allocate scratch space. Exiting.\n");
         hs_free_database(database);
         return -1;
@@ -137,6 +138,5 @@ void FileProcessWorker::process()
         sourceFile.close();
     }
     std::filesystem::resize_file(resultFileName.toStdString(), sizeCounter);
-
     this->thread()->quit();
 }
