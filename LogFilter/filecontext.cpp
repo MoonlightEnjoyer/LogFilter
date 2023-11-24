@@ -108,7 +108,7 @@ void FileContext::getPage()
 
 void FileContext::getPrevPage()
 {
-    std::cout << "Page(prev): " << this->page << std::endl;
+    //std::cout << "Page(prev): " << this->page << std::endl;
 
     std::ifstream sourceFile(this->sourceFilePath);
 
