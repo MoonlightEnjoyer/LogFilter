@@ -66,35 +66,32 @@ void FileContext::getLineLength()
 
 void FileContext::getPage()
 {
-    std::cout << this->pageSpinBox->value() << std::endl;
-    std::cout << this->lineLength << std::endl;
-
     std::ifstream sourceFile(this->sourceFilePath);
 
     unsigned int value = this->pageSpinBox->value() - 1;
 
-    this->page = value + 1;
+    std::int64_t startPos = (std::int64_t)value * (std::int64_t)this->pageSize * (std::int64_t)this->lineLength;
 
-    if (value < 0 || value * this->pageSize >= std::filesystem::file_size(this->sourceFilePath))
+    if (value < 0 || startPos >= std::filesystem::file_size(this->sourceFilePath))
     {
-        std::cout << "Page with given number doesn't exist." << std::endl;
-        this->tabTextEdit->clear();
+        this->pageSpinBox->setValue(this->page);
         sourceFile.close();
         return;
     }
 
-    sourceFile.seekg(value * this->pageSize);
+    this->page = value + 1;
 
-    for (std::int64_t f = value * this->pageSize; f > 0 && sourceFile.peek() != '\n' && sourceFile.peek() != '\r'; f--)
+    sourceFile.seekg(startPos);
+
+    for (std::int64_t f = startPos; f > 0 && sourceFile.peek() != '\n' && sourceFile.peek() != '\r'; f--)
     {
         sourceFile.seekg(f);
     }
 
-    std::string line;
-
     this->tabTextEdit->clear();
-
     this->pageStartPos = sourceFile.tellg();
+
+    std::string line;
 
     for (int i = 0; i < this->pageSize && getline(sourceFile, line); i++)
     {
@@ -108,8 +105,6 @@ void FileContext::getPage()
 
 void FileContext::getPrevPage()
 {
-    //std::cout << "Page(prev): " << this->page << std::endl;
-
     std::ifstream sourceFile(this->sourceFilePath);
 
     if (this->page <= 1)
@@ -119,14 +114,11 @@ void FileContext::getPrevPage()
     }
 
     this->page--;
-
     this->pageSpinBox->setValue(this->page);
-
-    std::string line;
-
     this->tabTextEdit->clear();
 
     int counter = 0;
+    std::string line;
 
     for (std::int64_t i = this->pageStartPos; i >= 0 && counter <= this->pageSize + 1; i--)
     {
@@ -153,25 +145,32 @@ void FileContext::getPrevPage()
 
 void FileContext::getNextPage()
 {
-    std::cout << "Page(next): " << this->page << std::endl;
     std::ifstream sourceFile(this->sourceFilePath);
 
-    this->page++;
-
-    this->pageSpinBox->setValue(this->page);
-
-    std::string line;
+    QString previousText = this->tabTextEdit->toPlainText();
 
     this->tabTextEdit->clear();
 
-    this->pageStartPos = this->pageEndPos;
-
     sourceFile.seekg(this->pageEndPos);
+
+    std::string line;
 
     for (int i = 0; i < this->pageSize && getline(sourceFile, line); i++)
     {
         this->tabTextEdit->append(QString::fromStdString(line));
+
+    }
+
+    if (this->tabTextEdit->toPlainText().size() != 0)
+    {
+        this->page++;
+        this->pageSpinBox->setValue(this->page);
+        this->pageStartPos = this->pageEndPos;
         this->pageEndPos = sourceFile.tellg();
+    }
+    else
+    {
+        this->tabTextEdit->append(previousText);
     }
 
     sourceFile.close();
@@ -181,19 +180,13 @@ void FileContext::getLastPage()
 {
     std::ifstream sourceFile(this->sourceFilePath);
 
-    std::filesystem::path source_path{this->sourceFilePath};
-
-    this->pageStartPos = std::filesystem::file_size(source_path);
-
-    this->page = this->pageStartPos / this->pageSize;
-
+    this->pageStartPos = std::filesystem::file_size(this->sourceFilePath);
+    this->page = this->pageStartPos / (this->pageSize * this->lineLength);
     this->pageSpinBox->setValue(this->page);
-
-    std::string line;
-
     this->tabTextEdit->clear();
 
     int counter = 0;
+    std::string line;
 
     for (std::int64_t i = this->pageStartPos; i >= 0 && counter <= this->pageSize + 1; i--)
     {
