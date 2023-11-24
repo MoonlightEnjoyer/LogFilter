@@ -74,6 +74,8 @@ void MainWindow::openFile()
         prevPageButton->setText("Prev page");
         QPushButton* nextPageButton = new QPushButton();
         nextPageButton->setText("Next page");
+        QPushButton* lastPageButton = new QPushButton();
+        lastPageButton->setText("Last page");
 
         QHBoxLayout* horLayout = new QHBoxLayout();
 
@@ -81,6 +83,7 @@ void MainWindow::openFile()
         horLayout->addWidget(nextPageButton);
         horLayout->addWidget(pageSpinBox);
         horLayout->addWidget(openPageButton);
+        horLayout->addWidget(lastPageButton);
 
         tabLayout->addWidget(tabFilterTextEdit, 0, 0);
         tabLayout->addWidget(searchButton, 0, 1);
@@ -99,6 +102,7 @@ void MainWindow::openFile()
         connect(openPageButton, &QPushButton::released, newFileContext, &FileContext::getPage);
         connect(nextPageButton, &QPushButton::released, newFileContext, &FileContext::getNextPage);
         connect(prevPageButton, &QPushButton::released, newFileContext, &FileContext::getPrevPage);
+        connect(lastPageButton, &QPushButton::released, newFileContext, &FileContext::getLastPage);
 
         newFileContext->getPage();
     }

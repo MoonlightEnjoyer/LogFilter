@@ -43,6 +43,7 @@ public slots:
     void getPage();
     void getNextPage();
     void getPrevPage();
+    void getLastPage();
 };
 
 #endif // FILECONTEXT_H
